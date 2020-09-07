@@ -1,0 +1,20 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+pandas = "===1.0.5"
+numpy = "*"
+sklearn = "*"
+matplotlib = "*"
+ipykernel = "*"
+sphinx = "*"
+pytest = "*"
+xgboost = "*"
+graphviz = "*"
+
+[requires]
+python_version = "3.7"
