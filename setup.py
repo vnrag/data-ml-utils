@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 # Package meta-data.
-NAME = 'datamlutils'
+NAME = 'data_ml_utils'
 DESCRIPTION = 'Public VNR package for Machine Learning Utils'
 URL = 'git@github.com:vnrag/data-ml-utils.git'
 VERSION = '0.1.0'
