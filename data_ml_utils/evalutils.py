@@ -8,6 +8,12 @@ import matplotlib.pyplot as plt
 import json
 import csv
 
+def save_dict_as_text(data_dict , fname):
+    with open(f'{fname}.csv', 'w') as csv_file:
+        writer = csv.writer(csv_file)
+        for key, value in data_dict.items():
+            writer.writerow([key, value])
+
 class eval(object):
     logger=None
     algorithm_name=None
@@ -47,10 +53,27 @@ class eval(object):
     def get_xgb_eval_metrics(self, xgb_model):
         self.xgb_metrics.get_xgb_eval(xgb_model)
         
-        
     def generate_xgb_eval_plots(self):
         self.xgb_metrics.generate_plots(self.y_actual, self.y_predicted_prob_one)
+    
+    def export_eval_as_text(self):
         self.xgb_metrics.save_plots_as_text(self.y_actual, self.y_predicted_prob_one)
+        self.save_atomic_metrics_as_text()
+    
+    def save_atomic_metrics_as_text(self):
+        atomic={}
+        atomic['algorithm_name']= self.algorithm_name
+        atomic['timestamp']= self.timestamp
+        atomic['train_data_name']= self.train_data_name
+        atomic['num_rows']= self.num_rows
+        atomic['num_features']= self.num_features
+        atomic['cv_folds']= self.cv_folds
+        atomic['feature_vector']= self.xgb_metrics.booster.feature_names
+        atomic['used_features']= self.xgb_metrics.used_features
+        save_dict_as_text(atomic, 'atomic_metrics')
+    
+    # def save_general_metrics_as_text(self):
+    #     save_dict_as_text(self.general_metrics[''])
 
 
 class general_eval(object):
@@ -98,7 +121,6 @@ class xgboost_eval(object):
     booster= None
     used_features= None
     metrics= None
-    plots= None
     validation_metrics=['auc', 'rmse', 'mae', 'logloss', 'error', 'aucpr', 'map']
 
     def __init__(self):
@@ -209,10 +231,10 @@ class xgboost_eval(object):
         self.save_pr_as_text(y_actual, y_predicted_prob)
     
     def save_importance_as_text(self):
-        self.save_dict_as_text(self.metrics['importance']['gain'], 'imp_gain')
+        save_dict_as_text(self.metrics['importance']['gain'], 'imp_gain')
     
     def save_tree_as_text(self, xgb_booster):
-        xgb_booster.dump_model('xgb_clf_dump.csv')
+        xgb_booster.dump_model('tree.csv')
     
     def save_roc_as_text(self, y_actual, y_predicted_prob):
         fpr, tpr, _ = metrics.roc_curve(y_actual, y_predicted_prob)
@@ -223,9 +245,3 @@ class xgboost_eval(object):
         precision, recall, _ = metrics.precision_recall_curve(y_actual, y_predicted_prob)
         df= pd.DataFrame({'precision':precision, 'recall': recall})
         df.to_csv(r'pr.csv', index = False, header=True)
-        
-    def save_dict_as_text(self, data_dict , fname):
-        with open(f'{fname}.csv', 'w') as csv_file:
-            writer = csv.writer(csv_file)
-            for key, value in data_dict.items():
-                writer.writerow([key, value])
