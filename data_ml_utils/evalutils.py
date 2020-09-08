@@ -5,6 +5,7 @@ from sklearn import metrics
 import pandas as pd
 import xgboost as xgb
 import matplotlib.pyplot as plt
+import json
 
 class eval(object):
     logger=None
@@ -102,10 +103,14 @@ class xgboost_eval(object):
         return self.validation_metrics
     
     def get_xgb_eval(self, xgb_model):
+        self.set_variables(xgb_model)
+        self.metrics= self.get_metrics_dict()
+        self.save_text_tree(xgb_model.get_booster())
+    
+    def set_variables(self, xgb_model):
         self.model= xgb_model
         self.booster= xgb_model.get_booster()
         self.used_features = xgb_model.get_booster().get_score().keys()
-        self.metrics= self.get_metrics_dict()
     
     def get_importance(self, xgb_model):
         importance_types = ['weight','gain','cover','total_gain','total_cover']
@@ -126,12 +131,31 @@ class xgboost_eval(object):
                 print(e)
         return hist
     
+    def get_training_params(self, xgb_model):
+        return xgb_model.get_params()
+    
+    def get_xgb_specific_params(self, xgb_model):
+        return xgb_model.get_xgb_params()
+    
+    def get_validation_results(self, xgb_model):
+        return xgb_model.evals_result()
+    
+    def get_model_config(self, booster):
+        return json.loads(booster.save_config())
+    
+    def save_text_tree(self, booster):
+        booster.dump_model('xgb_clf_dump.txt')
+    
     def get_metrics_dict(self):
         metrics={}
         metrics['importance']= self.get_importance(self.booster)
         metrics['histogram']= self.get_hist(self.booster, self.used_features)
+        metrics['training_params']= self.get_training_params(self.model)
+        metrics['xgb_specific_params']= self.get_xgb_specific_params(self.model)
+        metrics['validation_results']= self.get_validation_results(self.model)
+        metrics['model_config']= self.get_model_config(self.booster)
         return metrics
-    
+
     def generate_plots(self, y_actual, y_predicted_prob):
         self.get_importance_plots(self.model)
         self.get_tree_plot(self.model)
