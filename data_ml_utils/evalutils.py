@@ -21,7 +21,7 @@ class eval(object):
     y_predicted= None
     y_predicted_prob= None
     
-    def __init__(self, algorithm_name, timestamp, train_data_name, num_rows, num_features, cv_folds):
+    def __init__(self, algorithm_name, timestamp, train_data_name, num_rows, num_features, cv_folds=None):
         self.logger= logging.getLogger("ML_Eval")
         self.logger.setLevel(logging.CRITICAL)
         self.algorithm_name= algorithm_name
@@ -35,7 +35,8 @@ class eval(object):
         self.y_actual= y_actual
         self.y_predicted= y_predicted
         self.y_predicted_prob= y_predicted_prob
-    
+        self.y_predicted_prob_one= y_predicted_prob[:,1]
+
     def get_xgb_validation_metrics(self):
         return self.xgb_metrics.get_validation_metrics()
     
@@ -46,7 +47,7 @@ class eval(object):
         self.xgb_metrics.get_xgb_eval(xgb_model)
         
     def generate_xgb_eval_plots(self):
-        self.xgb_metrics.generate_plots(self.y_actual, self.y_predicted_prob)
+        self.xgb_metrics.generate_plots(self.y_actual, self.y_predicted_prob_one)
 
 class general_eval(object):
     metrics= None
@@ -122,11 +123,11 @@ class xgboost_eval(object):
                 print(e)
         return importance
 
-    def get_hist(self, xgb_model, used_features):
+    def get_hist(self, xgb_booster, used_features):
         hist={}
         for feature in used_features:
             try:
-                hist[feature]= xgb_model.get_split_value_histogram(feature)
+                hist[feature]= xgb_booster.get_split_value_histogram(feature)
             except Exception as e:
                 print(e)
         return hist
@@ -140,11 +141,11 @@ class xgboost_eval(object):
     def get_validation_results(self, xgb_model):
         return xgb_model.evals_result()
     
-    def get_model_config(self, booster):
-        return json.loads(booster.save_config())
+    def get_model_config(self, xgb_booster):
+        return json.loads(xgb_booster.save_config())
     
-    def save_text_tree(self, booster):
-        booster.dump_model('xgb_clf_dump.txt')
+    def save_text_tree(self, xgb_booster):
+        xgb_booster.dump_model('xgb_clf_dump.txt')
     
     def get_metrics_dict(self):
         metrics={}
@@ -164,21 +165,25 @@ class xgboost_eval(object):
         
     
     def get_importance_plots(self, xgb_model):
+        plt.rcParams.update(plt.rcParamsDefault)
         plt.bar(range(len(xgb_model.feature_importances_)), xgb_model.feature_importances_)
         plt.savefig('imp1.png', bbox_inches='tight')
         plt.close()
         
+        plt.rcParams.update(plt.rcParamsDefault)
         xgb.plot_importance(xgb_model)
         plt.savefig('imp2.png', bbox_inches='tight')
         plt.close()
     
     def get_tree_plot(self, xgb_model):
-        fig= plt.figure(figsize=(50,10))
+        plt.rcParams.update(plt.rcParamsDefault)
+        plt.rcParams['figure.figsize'] = [50, 10]
         xgb.plot_tree(xgb_model,num_trees=0)
         plt.savefig('tree.png', bbox_inches='tight')
         plt.close()
         
     def get_roc_plot(self, y_actual, y_predicted_prob):
+        plt.rcParams.update(plt.rcParamsDefault)
         fpr, tpr, thresholds = metrics.roc_curve(y_actual, y_predicted_prob)
         plt.plot(fpr, tpr, marker='.', label='xgboost')
         plt.xlabel('False Positive Rate')
@@ -188,6 +193,7 @@ class xgboost_eval(object):
         plt.close()
     
     def get_pr_plot(self, y_actual, y_predicted_prob):
+        plt.rcParams.update(plt.rcParamsDefault)
         precision, recall, thresholds = metrics.precision_recall_curve(y_actual, y_predicted_prob)
         plt.plot(recall, precision, marker='.', label='xgboost')
         plt.xlabel('Recall')
