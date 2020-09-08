@@ -6,6 +6,7 @@ import pandas as pd
 import xgboost as xgb
 import matplotlib.pyplot as plt
 import json
+import csv
 
 class eval(object):
     logger=None
@@ -46,8 +47,11 @@ class eval(object):
     def get_xgb_eval_metrics(self, xgb_model):
         self.xgb_metrics.get_xgb_eval(xgb_model)
         
+        
     def generate_xgb_eval_plots(self):
         self.xgb_metrics.generate_plots(self.y_actual, self.y_predicted_prob_one)
+        self.xgb_metrics.save_plots_as_text(self.y_actual, self.y_predicted_prob_one)
+
 
 class general_eval(object):
     metrics= None
@@ -94,6 +98,7 @@ class xgboost_eval(object):
     booster= None
     used_features= None
     metrics= None
+    plots= None
     validation_metrics=['auc', 'rmse', 'mae', 'logloss', 'error', 'aucpr', 'map']
 
     def __init__(self):
@@ -106,7 +111,6 @@ class xgboost_eval(object):
     def get_xgb_eval(self, xgb_model):
         self.set_variables(xgb_model)
         self.metrics= self.get_metrics_dict()
-        self.save_text_tree(xgb_model.get_booster())
     
     def set_variables(self, xgb_model):
         self.model= xgb_model
@@ -144,9 +148,6 @@ class xgboost_eval(object):
     def get_model_config(self, xgb_booster):
         return json.loads(xgb_booster.save_config())
     
-    def save_text_tree(self, xgb_booster):
-        xgb_booster.dump_model('xgb_clf_dump.txt')
-    
     def get_metrics_dict(self):
         metrics={}
         metrics['importance']= self.get_importance(self.booster)
@@ -163,7 +164,6 @@ class xgboost_eval(object):
         self.get_roc_plot(y_actual, y_predicted_prob)
         self.get_pr_plot(y_actual, y_predicted_prob)
         
-    
     def get_importance_plots(self, xgb_model):
         plt.rcParams.update(plt.rcParamsDefault)
         plt.bar(range(len(xgb_model.feature_importances_)), xgb_model.feature_importances_)
@@ -201,3 +201,31 @@ class xgboost_eval(object):
         plt.legend()
         plt.savefig('pr.png', bbox_inches='tight')
         plt.close()
+    
+    def save_plots_as_text(self, y_actual, y_predicted_prob):
+        self.save_importance_as_text()
+        self.save_tree_as_text(self.booster)
+        self.save_roc_as_text(y_actual, y_predicted_prob)
+        self.save_pr_as_text(y_actual, y_predicted_prob)
+    
+    def save_importance_as_text(self):
+        self.save_dict_as_text(self.metrics['importance']['gain'], 'imp_gain')
+    
+    def save_tree_as_text(self, xgb_booster):
+        xgb_booster.dump_model('xgb_clf_dump.txt')
+    
+    def save_roc_as_text(self, y_actual, y_predicted_prob):
+        fpr, tpr, thresholds = metrics.roc_curve(y_actual, y_predicted_prob)
+        df= pd.DataFrame({'fpr':fpr, 'tpr': tpr, 'thresholds':thresholds})
+        df.to_csv(r'roc.csv', index = False, header=True)
+    
+    def save_pr_as_text(self, y_actual, y_predicted_prob):
+        precision, recall, thresholds = metrics.precision_recall_curve(y_actual, y_predicted_prob)
+        df= pd.DataFrame({'precision':precision, 'recall': recall, 'thresholds':thresholds})
+        df.to_csv(r'pr.csv', index = False, header=True)
+        
+    def save_dict_as_text(self, data_dict , fname):
+        with open(f'{fname}.csv', 'w') as csv_file:
+            writer = csv.writer(csv_file)
+            for key, value in data_dict.items():
+                writer.writerow([key, value])
