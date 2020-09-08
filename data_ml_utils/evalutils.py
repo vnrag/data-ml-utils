@@ -212,16 +212,16 @@ class xgboost_eval(object):
         self.save_dict_as_text(self.metrics['importance']['gain'], 'imp_gain')
     
     def save_tree_as_text(self, xgb_booster):
-        xgb_booster.dump_model('xgb_clf_dump.txt')
+        xgb_booster.dump_model('xgb_clf_dump.csv')
     
     def save_roc_as_text(self, y_actual, y_predicted_prob):
-        fpr, tpr, thresholds = metrics.roc_curve(y_actual, y_predicted_prob)
-        df= pd.DataFrame({'fpr':fpr, 'tpr': tpr, 'thresholds':thresholds})
+        fpr, tpr, _ = metrics.roc_curve(y_actual, y_predicted_prob)
+        df= pd.DataFrame({'fpr':fpr, 'tpr': tpr})
         df.to_csv(r'roc.csv', index = False, header=True)
     
     def save_pr_as_text(self, y_actual, y_predicted_prob):
-        precision, recall, thresholds = metrics.precision_recall_curve(y_actual, y_predicted_prob)
-        df= pd.DataFrame({'precision':precision, 'recall': recall, 'thresholds':thresholds})
+        precision, recall, _ = metrics.precision_recall_curve(y_actual, y_predicted_prob)
+        df= pd.DataFrame({'precision':precision, 'recall': recall})
         df.to_csv(r'pr.csv', index = False, header=True)
         
     def save_dict_as_text(self, data_dict , fname):
