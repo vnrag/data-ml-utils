@@ -7,6 +7,7 @@ import xgboost as xgb
 import matplotlib.pyplot as plt
 import json
 import csv
+import os
 
 class general_eval(object):
     eval_type="general_eval"
@@ -69,10 +70,12 @@ class general_eval(object):
         self.save_dict_as_text(self.conf_matrix, 'confusion_matrix')
     
     def save_dict_as_text(self, data_dict , fname):
-        with open(f'{fname}.csv', 'w') as csv_file:
-            writer = csv.writer(csv_file)
-            for key, value in data_dict.items():
-                writer.writerow([key, value])
+        if not os.path.exists(os.path.dirname(fname)):
+            os.makedirs(os.path.dirname(fname))
+            with open(f'{fname}.csv', 'w') as csv_file:
+                writer = csv.writer(csv_file)
+                for key, value in data_dict.items():
+                    writer.writerow([key, value])
 
 class xgboost_eval(general_eval):
     eval_type="xgb_eval"
@@ -202,6 +205,7 @@ class xgboost_eval(general_eval):
             plt.close()
 
     def export_plots_as_text(self):
+        self.export_validation_as_text()
         self.export_importance_as_text()
         self.export_tree_as_text()
         self.export_roc_as_text()
@@ -227,5 +231,7 @@ class xgboost_eval(general_eval):
         df.to_csv(r'validation_results.csv', index = False, header=True)
     
     def export_model_metrics_as_text(self):
-        pass
-        # self.ave_dict_as_text(self.model_metrics, 'model_metrics')
+        combined_metrics = {**self.atomic_metrics, **self.model_metrics['xgb_specific_params']}
+        self.save_dict_as_text(combined_metrics, 'xgboost_metrics')
+        self.save_dict_as_text(self.model_metrics['histogram'], 'feature_histogram')
+        self.save_dict_as_text(self.model_metrics['model_config'], 'model_config')
