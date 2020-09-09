@@ -113,6 +113,7 @@ class xgboost_eval(general_eval):
         importance_df= pd.DataFrame(importance)
         importance_df.index.name ='feature'
         importance_df= importance_df.reset_index(level=0, inplace=True)
+        return importance_df
 
     def get_hist(self):
         hist={}
