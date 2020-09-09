@@ -140,6 +140,7 @@ class xgboost_eval(general_eval):
         return json.loads(self.booster.save_config())
 
     def get_plots(self):
+        self.get_validation_metrics_plots()
         self.get_importance_plots()
         self.get_tree_plot()
         self.get_roc_plot()
@@ -187,18 +188,15 @@ class xgboost_eval(general_eval):
         plt.close()
         self.plots['pr']=pr
     
-    def get_train_test_plot(self):
-        val_results= self.model_metrics['validation_results']
-        epochs = len(val_results['validation_0']['auc'])
-        x_axis = range(0, epochs)
-        fig, ax= plt.subplots()
-        ax.plot(x_axis, val_results['validation_0']['auc'], label='Train')
-        ax.plot(x_axis, val_results['validation_1']['auc'], label='Test')
-        ax.legend()
-        plt.ylabel('AUC')
-        plt.title('XGBoost AUC')
-        plt.savefig('train_vs_test.png', bbox_inches='tight')
-        plt.close()
+    def get_validation_metrics_plots(self):
+        for metric in self.validation_metrics:
+            df= self.model_metrics['validation_results'][[f'test_{metric}',f'train_{metric}']]
+            df.plot()
+            plt.ylabel(metric)
+            plt.xlabel('epochs')
+            plt.title(f'XGBoost {metric}')
+            plt.savefig(f'val_{metric}.png', bbox_inches='tight')
+            plt.close()
 
     def export_plots_as_text(self):
         self.export_importance_as_text()
@@ -223,6 +221,10 @@ class xgboost_eval(general_eval):
         df= pd.DataFrame({'precision':self.plots['pr']['precision'], 'recall': self.plots['pr']['recall']})
         df.to_csv(r'pr.csv', index = False, header=True)
     
+    def export_validation_as_text(self):
+        df= self.model_metrics['validation_results']
+        df.to_csv(r'validation_results.csv', index = False, header=True)
+    
     def export_model_metrics_as_text(self):
-        
-        self.ave_dict_as_text(self.model_metrics, 'model_metrics')
+        pass
+        # self.ave_dict_as_text(self.model_metrics, 'model_metrics')
