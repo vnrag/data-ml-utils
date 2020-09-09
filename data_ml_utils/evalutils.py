@@ -8,12 +8,6 @@ import matplotlib.pyplot as plt
 import json
 import csv
 
-def save_dict_as_text(data_dict , fname):
-    with open(f'{fname}.csv', 'w') as csv_file:
-        writer = csv.writer(csv_file)
-        for key, value in data_dict.items():
-            writer.writerow([key, value])
-
 class general_eval(object):
     eval_type="general_eval"
     logger=None
@@ -70,16 +64,15 @@ class general_eval(object):
     def roc_auc(self):
         return metrics.roc_auc_score(self.y_actual, self.y_predicted)
     
-    def export_eval_as_text(self):
-        self.export_atomic_metrics_as_text()
-        self.export_model_metrics_as_text()
-    
     def export_atomic_metrics_as_text(self):
-        save_dict_as_text(self.atomic_metrics, 'atomic_metrics')
-        save_dict_as_text(self.conf_matrix, 'confusion_matrix')
+        self.save_dict_as_text(self.atomic_metrics, 'atomic_metrics')
+        self.save_dict_as_text(self.conf_matrix, 'confusion_matrix')
     
-    def export_model_metrics_as_text(self):
-        save_dict_as_text(self.model_metrics, 'model_metrics')
+    def save_dict_as_text(self, data_dict , fname):
+        with open(f'{fname}.csv', 'w') as csv_file:
+            writer = csv.writer(csv_file)
+            for key, value in data_dict.items():
+                writer.writerow([key, value])
 
 class xgboost_eval(general_eval):
     eval_type="xgb_eval"
@@ -135,7 +128,13 @@ class xgboost_eval(general_eval):
         return self.model.get_xgb_params()
     
     def get_validation_results(self):
-        return self.model.evals_result()
+        val_results= self.model.evals_result()
+        train= pd.DataFrame(val_results['validation_0'])
+        train= train.add_prefix('train_')
+        test= pd.DataFrame(val_results['validation_1'])
+        test= test.add_prefix('test_')
+        train_test= pd.concat([train, test],axis=1)
+        return train_test
     
     def get_model_config(self):
         return json.loads(self.booster.save_config())
@@ -188,6 +187,19 @@ class xgboost_eval(general_eval):
         plt.close()
         self.plots['pr']=pr
     
+    def get_train_test_plot(self):
+        val_results= self.model_metrics['validation_results']
+        epochs = len(val_results['validation_0']['auc'])
+        x_axis = range(0, epochs)
+        fig, ax= plt.subplots()
+        ax.plot(x_axis, val_results['validation_0']['auc'], label='Train')
+        ax.plot(x_axis, val_results['validation_1']['auc'], label='Test')
+        ax.legend()
+        plt.ylabel('AUC')
+        plt.title('XGBoost AUC')
+        plt.savefig('train_vs_test.png', bbox_inches='tight')
+        plt.close()
+
     def export_plots_as_text(self):
         self.export_importance_as_text()
         self.export_tree_as_text()
@@ -210,3 +222,7 @@ class xgboost_eval(general_eval):
     def export_pr_as_text(self):
         df= pd.DataFrame({'precision':self.plots['pr']['precision'], 'recall': self.plots['pr']['recall']})
         df.to_csv(r'pr.csv', index = False, header=True)
+    
+    def export_model_metrics_as_text(self):
+        
+        self.ave_dict_as_text(self.model_metrics, 'model_metrics')
