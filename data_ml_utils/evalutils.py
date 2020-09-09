@@ -71,8 +71,14 @@ class general_eval(object):
         return metrics.roc_auc_score(self.y_actual, self.y_predicted)
     
     def export_eval_as_text(self):
+        self.export_atomic_metrics_as_text()
+        self.export_model_metrics_as_text()
+    
+    def export_atomic_metrics_as_text(self):
         save_dict_as_text(self.atomic_metrics, 'atomic_metrics')
         save_dict_as_text(self.conf_matrix, 'confusion_matrix')
+    
+    def export_model_metrics_as_text(self):
         save_dict_as_text(self.model_metrics, 'model_metrics')
 
 class xgboost_eval(general_eval):
@@ -86,7 +92,7 @@ class xgboost_eval(general_eval):
     def get_validation_metrics(self):
         return self.validation_metrics
     
-    def get_xgb_eval(self, xgb_model):
+    def get_eval(self, xgb_model):
         self.set_variables(xgb_model)
         self.get_model_metrics()
     
@@ -178,25 +184,25 @@ class xgboost_eval(general_eval):
         plt.savefig('pr.png', bbox_inches='tight')
         plt.close()
     
-    def save_plots_as_text(self):
-        self.save_importance_as_text()
-        self.save_tree_as_text()
-        self.save_roc_as_text()
-        self.save_pr_as_text()
+    def export_plots_as_text(self):
+        self.export_importance_as_text()
+        self.export_tree_as_text()
+        self.export_roc_as_text()
+        self.export_pr_as_text()
     
-    def save_importance_as_text(self):
+    def export_importance_as_text(self):
         df= pd.DataFrame(self.model_metrics['importance'])
         df['feature']=df.index
         df = df.reset_index(drop=True)
         df.to_csv(r'imp.csv', header=True)
     
-    def save_tree_as_text(self):
+    def export_tree_as_text(self):
         self.booster.dump_model('tree.csv')
     
-    def save_roc_as_text(self):
+    def export_roc_as_text(self):
         df= pd.DataFrame({'fpr':self.plots['roc']['fpr'], 'tpr': self.plots['roc']['tpr']})
         df.to_csv(r'roc.csv', index = False, header=True)
     
-    def save_pr_as_text(self):
+    def export_pr_as_text(self):
         df= pd.DataFrame({'precision':self.plots['pr']['precision'], 'recall': self.plots['pr']['recall']})
         df.to_csv(r'pr.csv', index = False, header=True)
