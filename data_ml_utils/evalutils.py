@@ -110,7 +110,9 @@ class xgboost_eval(general_eval):
                 importance[imp_type] = self.booster.get_score(importance_type= imp_type)
             except Exception as e:
                 print(e)
-        return importance
+        importance_df= pd.DataFrame(importance)
+        importance_df.index.name ='feature'
+        importance_df= importance_df.reset_index(level=0, inplace=True)
 
     def get_hist(self):
         hist={}
@@ -205,9 +207,7 @@ class xgboost_eval(general_eval):
         self.export_pr_as_text()
     
     def export_importance_as_text(self):
-        df= pd.DataFrame(self.model_metrics['importance'])
-        df.index.name ='feature'
-        df.reset_index(level=0, inplace=True)
+        df= self.model_metrics['importance']
         df.to_csv(r'imp.csv', index=False, header=True)
     
     def export_tree_as_text(self):
