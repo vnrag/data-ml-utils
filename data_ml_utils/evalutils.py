@@ -15,6 +15,7 @@ def save_dict_as_text(data_dict , fname):
             writer.writerow([key, value])
 
 class eval(object):
+    eval_type="basic_eval"
     logger=None
     algorithm_name=None
     timestamp=None
@@ -29,13 +30,14 @@ class eval(object):
     y_predicted_prob= None
     
     def __init__(self, algorithm_name, timestamp, train_data_name, num_rows, num_features, cv_folds=None):
-        self.logger= logging.getLogger("ML_Eval")
+        self.logger= logging.getLogger(eval_type)
         self.logger.setLevel(logging.CRITICAL)
         self.algorithm_name= algorithm_name
         self.timestamp= timestamp
         self.train_data_name= train_data_name
         self.cv_folds= cv_folds
         self.general_metrics= general_eval()
+        # move to xgb eval calass
         self.xgb_metrics= xgboost_eval()
     
     def prepare_eval(self, y_actual, y_predicted, y_predicted_prob=None):
@@ -44,6 +46,7 @@ class eval(object):
         self.y_predicted_prob= y_predicted_prob
         self.y_predicted_prob_one= y_predicted_prob[:,1]
 
+    # move to xgb eval class
     def get_xgb_validation_metrics(self):
         return self.xgb_metrics.get_validation_metrics()
     
@@ -76,8 +79,10 @@ class eval(object):
     #     save_dict_as_text(self.general_metrics[''])
 
 
-class general_eval(object):
+class general_eval(eval):
     metrics= None
+    eval_type="general_eval"
+
     
     def __init__(self):
         self.logger= logging.getLogger("General_Eval")
@@ -116,7 +121,9 @@ class general_eval(object):
         eval_metrics['auc_roc']= self.roc_auc(y_actual, y_predicted)
         return eval_metrics
 
-class xgboost_eval(object):
+class xgboost_eval(general_eval):
+    eval_type="xgb_eval"
+
     model= None
     booster= None
     used_features= None
@@ -231,7 +238,10 @@ class xgboost_eval(object):
         self.save_pr_as_text(y_actual, y_predicted_prob)
     
     def save_importance_as_text(self):
-        save_dict_as_text(self.metrics['importance']['gain'], 'imp_gain')
+        df= pd.DataFrame(self.metrics['importance'])
+        df['feature']=df.index
+        df = df.reset_index(drop=True)
+        df.to_csv(r'imp.csv', header=True)
     
     def save_tree_as_text(self, xgb_booster):
         xgb_booster.dump_model('tree.csv')
