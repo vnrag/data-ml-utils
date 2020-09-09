@@ -168,7 +168,7 @@ class xgboost_eval(general_eval):
         roc={}
         plt.rcParams.update(plt.rcParamsDefault)
         roc['fpr'], roc['tpr'], _ = metrics.roc_curve(self.y_actual, self.y_predicted_prob_one)
-        plt.plot(self.plots['roc']['fpr'], self.plots['roc']['tpr'], marker='.', label='xgboost')
+        plt.plot(roc['fpr'], roc['tpr'], marker='.', label='xgboost')
         plt.xlabel('False Positive Rate')
         plt.ylabel('True Positive Rate')
         plt.legend()
@@ -180,7 +180,7 @@ class xgboost_eval(general_eval):
         pr={}
         plt.rcParams.update(plt.rcParamsDefault)
         pr['precision'], pr['recall'], _ = metrics.precision_recall_curve(self.y_actual, self.y_predicted_prob_one)
-        plt.plot(self.plots['pr']['recall'], self.plots['pr']['precision'], marker='.', label='xgboost')
+        plt.plot(pr['recall'], pr['precision'], marker='.', label='xgboost')
         plt.xlabel('Recall')
         plt.ylabel('Precision')
         plt.legend()
