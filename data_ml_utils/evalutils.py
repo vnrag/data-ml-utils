@@ -196,9 +196,9 @@ class xgboost_eval(general_eval):
     
     def export_importance_as_text(self):
         df= pd.DataFrame(self.model_metrics['importance'])
-        df['feature']=df.index
-        df = df.reset_index(drop=True)
-        df.to_csv(r'imp.csv', header=True)
+        df.index.name ='feature'
+        df.reset_index(level=0, inplace=True)
+        df.to_csv(r'imp.csv', index=False, header=True)
     
     def export_tree_as_text(self):
         self.booster.dump_model('tree.csv')
