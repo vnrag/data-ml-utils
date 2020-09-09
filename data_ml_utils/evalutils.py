@@ -114,7 +114,7 @@ class xgboost_eval(general_eval):
         importance={}
         for imp_type in importance_types:
             try:
-                importance[imp_type] = self.model.get_score(importance_type= imp_type)
+                importance[imp_type] = self.booster.get_score(importance_type= imp_type)
             except Exception as e:
                 print(e)
         return importance
