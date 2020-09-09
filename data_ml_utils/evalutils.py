@@ -7,7 +7,6 @@ import xgboost as xgb
 import matplotlib.pyplot as plt
 import json
 import csv
-import os
 
 class general_eval(object):
     eval_type="general_eval"
@@ -70,12 +69,10 @@ class general_eval(object):
         self.save_dict_as_text(self.conf_matrix, 'confusion_matrix')
     
     def save_dict_as_text(self, data_dict , fname):
-        if not os.path.exists(os.path.dirname(fname)):
-            os.makedirs(os.path.dirname(fname))
-            with open(f'{fname}.csv', 'w') as csv_file:
-                writer = csv.writer(csv_file)
-                for key, value in data_dict.items():
-                    writer.writerow([key, value])
+        with open(f'{fname}.csv', 'w') as csv_file:
+            writer = csv.writer(csv_file)
+            for key, value in data_dict.items():
+                writer.writerow([key, value])
 
 class xgboost_eval(general_eval):
     eval_type="xgb_eval"
