@@ -165,24 +165,28 @@ class xgboost_eval(general_eval):
         plt.close()
         
     def get_roc_plot(self):
+        roc={}
         plt.rcParams.update(plt.rcParamsDefault)
-        self.plots['roc']['fpr'], self.plots['roc']['tpr'], _ = metrics.roc_curve(self.y_actual, self.y_predicted_prob_one)
+        roc['fpr'], roc['tpr'], _ = metrics.roc_curve(self.y_actual, self.y_predicted_prob_one)
         plt.plot(self.plots['roc']['fpr'], self.plots['roc']['tpr'], marker='.', label='xgboost')
         plt.xlabel('False Positive Rate')
         plt.ylabel('True Positive Rate')
         plt.legend()
         plt.savefig('roc.png', bbox_inches='tight')
         plt.close()
+        self.plots['roc']=roc
     
     def get_pr_plot(self):
+        pr={}
         plt.rcParams.update(plt.rcParamsDefault)
-        self.plots['pr']['precision'], self.plots['pr']['recall'], _ = metrics.precision_recall_curve(self.y_actual, self.y_predicted_prob_one)
+        pr['precision'], pr['recall'], _ = metrics.precision_recall_curve(self.y_actual, self.y_predicted_prob_one)
         plt.plot(self.plots['pr']['recall'], self.plots['pr']['precision'], marker='.', label='xgboost')
         plt.xlabel('Recall')
         plt.ylabel('Precision')
         plt.legend()
         plt.savefig('pr.png', bbox_inches='tight')
         plt.close()
+        self.plots['pr']=pr
     
     def export_plots_as_text(self):
         self.export_importance_as_text()
