@@ -27,8 +27,8 @@ class general_eval(object):
         self.atomic_metrics['num_rows']= num_rows
         self.atomic_metrics['num_features']= num_features
         self.atomic_metrics['cv_folds']= cv_folds
-        
-    
+
+
     def get_atomic_metrics(self, y_actual, y_predicted, y_predicted_prob):
         self.y_actual= y_actual
         self.y_predicted= y_predicted
@@ -142,6 +142,12 @@ class xgboost_eval(general_eval):
     def get_model_config(self):
         return json.loads(self.booster.save_config())
 
+    def export_model_metrics_as_text(self):
+        combined_metrics = {**self.atomic_metrics, **self.model_metrics['xgb_specific_params']}
+        self.save_dict_as_text(combined_metrics, 'xgboost_metrics')
+        self.save_dict_as_text(self.model_metrics['histogram'], 'feature_histogram')
+        self.save_dict_as_text(self.model_metrics['model_config'], 'model_config')
+
     def get_plots(self):
         self.get_validation_metrics_plots()
         self.get_importance_plots()
@@ -226,9 +232,3 @@ class xgboost_eval(general_eval):
     def export_validation_as_text(self):
         df= self.model_metrics['validation_results']
         df.to_csv(r'validation_results.csv', index = False, header=True)
-    
-    def export_model_metrics_as_text(self):
-        combined_metrics = {**self.atomic_metrics, **self.model_metrics['xgb_specific_params']}
-        self.save_dict_as_text(combined_metrics, 'xgboost_metrics')
-        self.save_dict_as_text(self.model_metrics['histogram'], 'feature_histogram')
-        self.save_dict_as_text(self.model_metrics['model_config'], 'model_config')

@@ -2,10 +2,11 @@
 """
 import logging
 import pandas as pd
+import csv
 
 class general_metrics(object):
     logger= None
-    metrics= None
+    metrics= {}
     
     def __init__(self):
         self.logger= logging.getLogger(__name__)
@@ -13,5 +14,13 @@ class general_metrics(object):
 
     def get_features_corr_matrix(self, matrix):
         x_pd= pd.DataFrame(matrix)
-        x_pd_corr = x_pd.corr()
-        return x_pd_corr
+        self.metrics['corr_matrix'] = x_pd.corr()
+    
+    def export_general_metrics_as_text(self):
+        self.save_dict_as_text(self.metrics, 'f_selection')
+    
+    def save_dict_as_text(self, data_dict , fname):
+        with open(f'{fname}.csv', 'w') as csv_file:
+            writer = csv.writer(csv_file)
+            for key, value in data_dict.items():
+                writer.writerow([key, value])
