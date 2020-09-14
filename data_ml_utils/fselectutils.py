@@ -14,7 +14,10 @@ class general_metrics(object):
 
     def get_features_corr_matrix(self, matrix):
         x_pd= pd.DataFrame(matrix)
-        self.metrics['corr_matrix'] = x_pd.corr()
+        corr_mtx= x_pd.corr()
+        corr_mtx.index.name ='feature'
+        corr_mtx.reset_index(level=0, inplace=True)
+        self.metrics['corr_matrix'] = corr_mtx
     
     def export_corr_matrix_as_text(self):
         df= self.metrics['corr_matrix']
