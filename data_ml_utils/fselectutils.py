@@ -17,7 +17,8 @@ class general_metrics(object):
         self.metrics['corr_matrix'] = x_pd.corr()
     
     def export_corr_matrix_as_text(self):
-        self.save_dict_as_text(self.metrics['corr_matrix'], 'f_selection')
+        df= self.metrics['corr_matrix']
+        df.to_csv(r'feature_corr_matrix.csv', index = False, header=True)
     
     def save_dict_as_text(self, data_dict , fname):
         with open(f'{fname}.csv', 'w') as csv_file:
