@@ -65,14 +65,27 @@ class general_eval(object):
         return metrics.roc_auc_score(self.y_actual, self.y_predicted)
     
     def export_atomic_metrics_as_text(self):
-        self.save_dict_as_text(self.atomic_metrics, 'atomic_metrics')
-        self.save_dict_as_text(self.conf_matrix, 'confusion_matrix')
+        self.save_dict_as_one_row_text(self.atomic_metrics, 'atomic_metrics')
+        self.export_confusion_matrix_as_text()
+    
+    def export_confusion_matrix_as_text(self):
+        df= pd.DataFrame({'actual':self.y_actual, 'predicted':self.y_predicted})
+        df= df.groupby(['actual','predicted'], as_index=False).size()
+        df.rename(columns={'size': 'count'})
+        df.to_csv(r'confusion_matrix.csv', index = False, header=True)
     
     def save_dict_as_text(self, data_dict , fname):
         with open(f'{fname}.csv', 'w') as csv_file:
             writer = csv.writer(csv_file)
             for key, value in data_dict.items():
                 writer.writerow([key, value])
+    
+    def save_dict_as_one_row_text(self, data_dict, fname):
+        csv_columns= data_dict.keys()
+        with open(f'{fname}.csv', 'w') as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
+            writer.writeheader()
+            writer.writerow(data_dict)
 
 class xgboost_eval(general_eval):
     eval_type="xgb_eval"
@@ -119,7 +132,11 @@ class xgboost_eval(general_eval):
         hist={}
         for feature in self.used_features:
             try:
-                hist[feature]= self.booster.get_split_value_histogram(feature)
+                df= self.booster.get_split_value_histogram(feature)
+                df.index.name= 'split_index'
+                df.reset_index(level=0, inplace=True)
+                df['feature']= feature
+                hist[feature]= df
             except Exception as e:
                 print(e)
         return hist
@@ -144,7 +161,7 @@ class xgboost_eval(general_eval):
 
     def export_model_metrics_as_text(self):
         combined_metrics = {**self.atomic_metrics, **self.model_metrics['xgb_specific_params']}
-        self.save_dict_as_text(combined_metrics, 'xgboost_metrics')
+        self.save_dict_as_one_row_text(combined_metrics, 'xgboost_metrics')
         self.save_dict_as_text(self.model_metrics['histogram'], 'feature_histogram')
         self.save_dict_as_text(self.model_metrics['model_config'], 'model_config')
 
@@ -223,12 +240,18 @@ class xgboost_eval(general_eval):
     
     def export_roc_as_text(self):
         df= pd.DataFrame({'fpr':self.plots['roc']['fpr'], 'tpr': self.plots['roc']['tpr']})
+        df.index.name='index'
+        df.reset_index(level=0, inplace= True)
         df.to_csv(r'roc.csv', index = False, header=True)
     
     def export_pr_as_text(self):
         df= pd.DataFrame({'precision':self.plots['pr']['precision'], 'recall': self.plots['pr']['recall']})
+        df.index.name='index'
+        df.reset_index(level=0, inplace= True)
         df.to_csv(r'pr.csv', index = False, header=True)
     
     def export_validation_as_text(self):
         df= self.model_metrics['validation_results']
+        df.index.name='epoch'
+        df.reset_index(level=0, inplace= True)
         df.to_csv(r'validation_results.csv', index = False, header=True)
