@@ -45,9 +45,13 @@ class general_eval(object):
         self.atomic_metrics['auc_roc']= self.roc_auc()
     
     def confusion_matrix(self):
-       return pd.crosstab(self.y_actual, self.y_predicted, \
-                        rownames=['Actual'], colnames=['Predicted'], \
-                        margins=True, margins_name='Total')
+        conf_df= pd.DataFrame({'actual':self.y_actual,
+                          'predicted':self.y_predicted})
+        conf_df= conf_df.groupby(['actual','predicted'], as_index=False).size()
+        conf_df.rename(columns={'size': 'count'})
+        conf_df['model']= self.atomic_metrics['model']
+        conf_df['ts']= self.atomic_metrics['ts']
+        return conf_df
     
     def accuracy(self):
         return metrics.accuracy_score(self.y_actual, self.y_predicted)
@@ -69,12 +73,7 @@ class general_eval(object):
         self.export_confusion_matrix_as_text()
     
     def export_confusion_matrix_as_text(self):
-        df= pd.DataFrame({'actual':self.y_actual,
-                          'predicted':self.y_predicted})
-        df= df.groupby(['actual','predicted'], as_index=False).size()
-        df.rename(columns={'size': 'count'})
-        df['model']= self.atomic_metrics['model']
-        df['ts']= self.atomic_metrics['ts']
+        df= self.conf_matrix
         df.to_csv(r'confusion_matrix.csv', index = False, header=True)
     
     def save_dict_as_text(self, data_dict , fname):
@@ -129,6 +128,8 @@ class xgboost_eval(general_eval):
         importance_df= pd.DataFrame(importance)
         importance_df.index.name ='feature'
         importance_df.reset_index(level=0, inplace=True)
+        importance_df['model']= self.atomic_metrics['model']
+        importance_df['ts']= self.atomic_metrics['ts']
         return importance_df
 
     def get_hist(self):
@@ -148,6 +149,8 @@ class xgboost_eval(general_eval):
         cols = hist_df.columns.tolist()
         cols = cols[-1:] + cols[:-1]
         hist_df= hist_df[cols]
+        hist_df['mode']= self.atomic_metrics['model']
+        hist_df['ts']= self.atomic_metrics['ts']
         return hist_df
     
     def get_training_params(self):
@@ -165,6 +168,8 @@ class xgboost_eval(general_eval):
         train_test= pd.concat([train, test],axis=1)
         train_test.index.name='epoch'
         train_test.reset_index(level=0, inplace= True)
+        train_test['model']= self.atomic_metrics['model']
+        train_test= self.atomic_metrics['ts']
         return train_test
     
     def get_model_config(self):
@@ -206,28 +211,45 @@ class xgboost_eval(general_eval):
         plt.close()
         
     def get_roc_plot(self):
-        roc={}
+        self.get_roc_values()
+        fpr= self.plots['roc']['fpr']
+        tpr= self.plots['roc']['tpr']
         plt.rcParams.update(plt.rcParamsDefault)
-        roc['fpr'], roc['tpr'], _ = metrics.roc_curve(self.y_actual, self.y_predicted_prob_one)
-        plt.plot(roc['fpr'], roc['tpr'], marker='.', label='xgboost')
+        plt.plot(fpr, tpr, marker='.', label='xgboost')
         plt.xlabel('False Positive Rate')
         plt.ylabel('True Positive Rate')
         plt.legend()
         plt.savefig('roc.png', bbox_inches='tight')
         plt.close()
-        self.plots['roc']=roc
+    
+    def get_roc_values(self):
+        fpr, tpr, _ = metrics.roc_curve(self.y_actual, self.y_predicted_prob_one)
+        roc_df= pd.DataFrame({'fpr':fpr, 'tpr': tpr})
+        roc_df.index.name='index'
+        roc_df.reset_index(level=0, inplace= True)
+        roc_df['model']= self.atomic_metrics['model']
+        roc_df['ts']= self.atomic_metrics['ts']
+        self.plots['roc']= roc_df
     
     def get_pr_plot(self):
-        pr={}
         plt.rcParams.update(plt.rcParamsDefault)
-        pr['precision'], pr['recall'], _ = metrics.precision_recall_curve(self.y_actual, self.y_predicted_prob_one)
-        plt.plot(pr['recall'], pr['precision'], marker='.', label='xgboost')
+        precision= self.plots['pr']['precision']
+        recall= self.plots['pr']['recall']
+        plt.plot(recall, precision, marker='.', label='xgboost')
         plt.xlabel('Recall')
         plt.ylabel('Precision')
         plt.legend()
         plt.savefig('pr.png', bbox_inches='tight')
         plt.close()
-        self.plots['pr']=pr
+    
+    def get_pr_values(self):
+        precision, recall, _ = metrics.precision_recall_curve(self.y_actual, self.y_predicted_prob_one)
+        pr_df= pd.DataFrame({'precision':precision, 'recall': recall})
+        pr_df.index.name='index'
+        pr_df.reset_index(level=0, inplace= True)
+        pr_df['model']= self.atomic_metrics['model']
+        pr_df['ts']= self.atomic_metrics['ts']
+        self.plots['pr']= pr_df
     
     def get_validation_metrics_plots(self):
         for metric in self.validation_metrics:
@@ -254,15 +276,11 @@ class xgboost_eval(general_eval):
         self.booster.dump_model('tree.csv')
     
     def export_roc_as_text(self):
-        df= pd.DataFrame({'fpr':self.plots['roc']['fpr'], 'tpr': self.plots['roc']['tpr']})
-        df.index.name='index'
-        df.reset_index(level=0, inplace= True)
+        df= self.plots['roc']
         df.to_csv(r'roc.csv', index = False, header=True)
     
     def export_pr_as_text(self):
-        df= pd.DataFrame({'precision':self.plots['pr']['precision'], 'recall': self.plots['pr']['recall']})
-        df.index.name='index'
-        df.reset_index(level=0, inplace= True)
+        df= self.plots['pr']
         df.to_csv(r'pr.csv', index = False, header=True)
     
     def export_validation_as_text(self):
