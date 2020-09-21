@@ -70,11 +70,11 @@ class general_eval(object):
     
     def export_confusion_matrix_as_text(self):
         df= pd.DataFrame({'actual':self.y_actual,
-                          'predicted':self.y_predicted,
-                          'model': self.atomic_metrics['model'],
-                          'ts': self.atomic_metrics['ts']})
+                          'predicted':self.y_predicted})
         df= df.groupby(['actual','predicted'], as_index=False).size()
         df.rename(columns={'size': 'count'})
+        df['model']= self.atomic_metrics['model']
+        df['ts']= self.atomic_metrics['ts']
         df.to_csv(r'confusion_matrix.csv', index = False, header=True)
     
     def save_dict_as_text(self, data_dict , fname):
