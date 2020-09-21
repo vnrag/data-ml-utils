@@ -189,7 +189,9 @@ class xgboost_eval(general_eval):
         self.get_validation_metrics_plots()
         self.get_importance_plots()
         self.get_tree_plot()
+        self.get_roc_values()
         self.get_roc_plot()
+        self.get_pr_values()
         self.get_pr_plot()
         
     def get_importance_plots(self):
@@ -211,7 +213,6 @@ class xgboost_eval(general_eval):
         plt.close()
         
     def get_roc_plot(self):
-        self.get_roc_values()
         fpr= self.plots['roc']['fpr']
         tpr= self.plots['roc']['tpr']
         plt.rcParams.update(plt.rcParamsDefault)
