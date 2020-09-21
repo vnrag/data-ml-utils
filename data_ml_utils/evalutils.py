@@ -169,7 +169,7 @@ class xgboost_eval(general_eval):
         train_test.index.name='epoch'
         train_test.reset_index(level=0, inplace= True)
         train_test['model']= self.atomic_metrics['model']
-        train_test= self.atomic_metrics['ts']
+        train_test['ts']= self.atomic_metrics['ts']
         return train_test
     
     def get_model_config(self):
