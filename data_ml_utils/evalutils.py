@@ -163,6 +163,8 @@ class xgboost_eval(general_eval):
         test= pd.DataFrame(val_results['validation_1'])
         test= test.add_prefix('test_')
         train_test= pd.concat([train, test],axis=1)
+        train_test.index.name='epoch'
+        train_test.reset_index(level=0, inplace= True)
         return train_test
     
     def get_model_config(self):
@@ -171,8 +173,12 @@ class xgboost_eval(general_eval):
     def export_model_metrics_as_text(self):
         combined_metrics = {**self.atomic_metrics, **self.model_metrics['xgb_specific_params']}
         self.save_dict_as_one_row_text(combined_metrics, 'xgboost_metrics')
-        self.save_dict_as_text(self.model_metrics['histogram'], 'feature_histogram')
+        self.export_histogram_as_text()
         self.save_dict_as_text(self.model_metrics['model_config'], 'model_config')
+    
+    def export_histogram_as_text(self):
+        df= self.model_metrics['histogram']
+        df.to_csv(r'feature_histogram.csv', index=False, header=True)
 
     def get_plots(self):
         self.get_validation_metrics_plots()
@@ -261,6 +267,4 @@ class xgboost_eval(general_eval):
     
     def export_validation_as_text(self):
         df= self.model_metrics['validation_results']
-        df.index.name='epoch'
-        df.reset_index(level=0, inplace= True)
         df.to_csv(r'validation_results.csv', index = False, header=True)
