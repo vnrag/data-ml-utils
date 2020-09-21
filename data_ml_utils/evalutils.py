@@ -18,11 +18,11 @@ class general_eval(object):
     y_predicted= None
     y_predicted_prob= None
     
-    def __init__(self, algorithm_name, timestamp, train_data_name, num_rows, num_features, cv_folds):
+    def __init__(self, model_name, timestamp, train_data_name, num_rows, num_features, cv_folds):
         self.logger= logging.getLogger(self.eval_type)
         self.logger.setLevel(logging.CRITICAL)
-        self.atomic_metrics['algorithm_name']= algorithm_name
-        self.atomic_metrics['timestamp']= timestamp
+        self.atomic_metrics['model']= model_name
+        self.atomic_metrics['ts']= timestamp
         self.atomic_metrics['train_data_name']= train_data_name
         self.atomic_metrics['num_rows']= num_rows
         self.atomic_metrics['num_features']= num_features
@@ -69,7 +69,10 @@ class general_eval(object):
         self.export_confusion_matrix_as_text()
     
     def export_confusion_matrix_as_text(self):
-        df= pd.DataFrame({'actual':self.y_actual, 'predicted':self.y_predicted})
+        df= pd.DataFrame({'actual':self.y_actual,
+                          'predicted':self.y_predicted,
+                          'model': self.atomic_metrics['model'],
+                          'ts': self.atomic_metrics['timestamp']})
         df= df.groupby(['actual','predicted'], as_index=False).size()
         df.rename(columns={'size': 'count'})
         df.to_csv(r'confusion_matrix.csv', index = False, header=True)
@@ -138,6 +141,7 @@ class xgboost_eval(general_eval):
                 df['feature']= feature
                 hist[feature]= df
             except Exception as e:
+                print(f'Feature{feature}:')
                 print(e)
         return hist
     

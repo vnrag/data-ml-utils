@@ -22,9 +22,3 @@ class general_metrics(object):
     def export_corr_matrix_as_text(self):
         df= self.metrics['corr_matrix']
         df.to_csv(r'feature_corr_matrix.csv', index = False, header=True)
-    
-    def save_dict_as_text(self, data_dict , fname):
-        with open(f'{fname}.csv', 'w') as csv_file:
-            writer = csv.writer(csv_file)
-            for key, value in data_dict.items():
-                writer.writerow([key, value])
