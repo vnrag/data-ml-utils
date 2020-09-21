@@ -141,9 +141,14 @@ class xgboost_eval(general_eval):
                 df['feature']= feature
                 hist[feature]= df
             except Exception as e:
-                print(f'Feature{feature}:')
+                print(f'Feature {feature}:')
                 print(e)
-        return hist
+        hist_df = pd.concat(hist.values(), ignore_index=True)
+        # rearrange columns
+        cols = hist_df.columns.tolist()
+        cols = cols[-1:] + cols[:-1]
+        hist_df= hist_df[cols]
+        return hist_df
     
     def get_training_params(self):
         return self.model.get_params()
