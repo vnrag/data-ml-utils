@@ -7,6 +7,8 @@ import xgboost as xgb
 import matplotlib.pyplot as plt
 import json
 import csv
+from data_utils.awsutils import S3Base, SSMBase
+import numpy as np
 
 class general_eval(object):
     eval_type="general_eval"
@@ -17,8 +19,13 @@ class general_eval(object):
     y_actual= None
     y_predicted= None
     y_predicted_prob= None
+    export_local= None
+    export_s3= None
+    s3_base= None
+    ssm_base= None
+    export_bucket= None
     
-    def __init__(self, model_name, ts, train_data_name, num_rows, num_features, cv_folds):
+    def __init__(self, model_name, ts, train_data_name, num_rows, num_features, cv_folds, export_local= False, export_s3= False):
         self.logger= logging.getLogger(self.eval_type)
         self.logger.setLevel(logging.CRITICAL)
         self.atomic_metrics['model']= model_name
@@ -27,7 +34,12 @@ class general_eval(object):
         self.atomic_metrics['num_rows']= num_rows
         self.atomic_metrics['num_features']= num_features
         self.atomic_metrics['cv_folds']= cv_folds
-
+        self.export_local = export_local
+        if export_s3:
+            self.export_s3 = export_s3
+            self.s3_base= S3Base()
+            self.ssm_base= SSMBase()
+            self.export_bucket = 'MLBucketName'
 
     def get_atomic_metrics(self, y_actual, y_predicted, y_predicted_prob):
         self.y_actual= y_actual
@@ -193,6 +205,8 @@ class xgboost_eval(general_eval):
         self.get_roc_plot()
         self.get_pr_values()
         self.get_pr_plot()
+        self.get_prob_values()
+        self.get_prob_plot()
         
     def get_importance_plots(self):
         plt.rcParams.update(plt.rcParamsDefault)
@@ -261,13 +275,38 @@ class xgboost_eval(general_eval):
             plt.title(f'XGBoost {metric}')
             plt.savefig(f'val_{metric}.png', bbox_inches='tight')
             plt.close()
-
+    
+    def get_prob_plot(self):
+        df= self.plots['prob']
+        neg= df[df['classification'=='Negatives']['prob_class_1']]
+        pos= df[df['classification'=='Positives']['prob_class_1']]
+        plt.hist(neg, bins=100, label='Negatives')
+        plt.hist(pos, bins=100, label='Positives', alpha=0.7, color='r')
+        plt.xlabel('Probability of being Positive Class')
+        plt.ylabel('Number of records in each bucket')
+        plt.legend()
+        plt.tick_params(axis='both', pad=5)
+        plt.savefig(f'proba.png', bbox_inches='tight')
+        plt.close()
+    
+    def get_prob_values(self):
+        cols = ['predicted','actual','prob_class_1']
+        data= np.column_stack([self.y_predicted, self.y_actual, self.y_predicted_prob_one])
+        prob_df = pd.DataFrame(data= data, columns = cols)
+        prob_df['classification'] = np.where(prob_df['predicted']==prob_df['actual'],'Positives','Negatives')
+        prob_df.index.name='index'
+        prob_df.reset_index(level=0, inplace=True)
+        prob_df['model']= self.atomic_metrics['model']
+        prob_df['ts']= self.atomic_metrics['ts']
+        self.plots['prob']= prob_df
+    
     def export_plots_as_text(self):
         self.export_validation_as_text()
         self.export_importance_as_text()
         self.export_tree_as_text()
         self.export_roc_as_text()
         self.export_pr_as_text()
+        self.export_prob_plot_as_text()
     
     def export_importance_as_text(self):
         df= self.model_metrics['importance']
@@ -287,3 +326,7 @@ class xgboost_eval(general_eval):
     def export_validation_as_text(self):
         df= self.model_metrics['validation_results']
         df.to_csv(r'validation_results.csv', index = False, header=True)
+    
+    def export_prob_plot_as_text(self):
+        df = self.plots['prob']
+        df.to_csv(r'proba.csv', index=False, header= True)
