@@ -278,10 +278,8 @@ class xgboost_eval(general_eval):
     
     def get_prob_plot(self):
         df= self.plots['prob']
-        import IPython
-        IPython.embed()
-        neg= df[df['classification'=='Negatives']]['prob_class_1']
-        pos= df[df['classification'=='Positives']]['prob_class_1']
+        neg= df[df.classification=='Negatives']['prob_class_1']
+        pos= df[df.classification=='Positives']['prob_class_1']
         plt.hist(neg, bins=100, label='Negatives')
         plt.hist(pos, bins=100, label='Positives', alpha=0.7, color='r')
         plt.xlabel('Probability of being Positive Class')
