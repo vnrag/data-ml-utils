@@ -15,7 +15,8 @@ REQUIRED = [
     'sklearn',
     'matplotlib',
     'xgboost',
-    'graphviz'
+    'graphviz',
+    'git+https://git@github.com/vnrag/data-utils.git#egg=data_utils'
 ]
 
 # Import the README and use it as the long-description.
