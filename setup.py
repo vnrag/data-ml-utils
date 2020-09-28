@@ -16,7 +16,7 @@ REQUIRED = [
     'matplotlib',
     'xgboost',
     'graphviz',
-    'pip @ git+https://git@github.com/vnrag/data-utils.git#egg=data_utils'
+    'git+https://github.com/vnrag/data-utils.git'
 ]
 
 # Import the README and use it as the long-description.
