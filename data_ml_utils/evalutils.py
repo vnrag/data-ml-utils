@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import json
 import csv
 from data_utils.awsutils import S3Base, SSMBase
+import os
 from data_utils import generalutils as gu
 import numpy as np
 
@@ -38,7 +39,10 @@ class general_eval(object):
         self.atomic_metrics['num_rows']= num_rows
         self.atomic_metrics['num_features']= num_features
         self.atomic_metrics['cv_folds']= cv_folds
-        self.export_local = export_local
+        if export_local:
+            self.export_local = export_local
+            proj_folder= os.path.dirname(os.path.abspath(__file__))
+            self.local_folder= gu.get_target_path(proj_folder, f'{model_name}')
         if export_s3:
             self.export_s3 = export_s3
             self.s3_base= S3Base()
@@ -86,29 +90,30 @@ class general_eval(object):
     
     def export_atomic_metrics(self):
         if self.export_local:
-            self.save_dict_as_one_row_text(self.atomic_metrics, 'atomic_metrics')
+            self.export_dict_as_one_row_text(self.atomic_metrics, 'atomic_metrics')
             self.export_confusion_matrix_as_text()
         if self.export_s3:
             self.export_atomic_metrics_to_s3()
             self.export_confusion_matrix_to_s3()
     
-    def export_confusion_matrix_as_text(self):
-        df= self.conf_matrix
-        df.to_csv(r'confusion_matrix.csv', index = False, header=True)
-    
-    def export_atomic_metrics_to_s3(self):
-        df= gu.normalize_json(self.atomic_metrics)
-        self.export_metric_to_s3(df, 'atomic_metrics', 'atomic_metrics')
-    
-    def export_confusion_matrix_to_s3(self):
-        df= self.conf_matrix
-        self.export_metric_to_s3(df, 'confusion_matrix', 'confusion_matrix')
-    
-    def save_dict_as_text(self, data_dict , fname):
-        with open(f'{fname}.csv', 'w') as csv_file:
+    def export_dict_as_text(self, data_dict , fname):
+        file_path= gu.get_target_path([self.local_folder, fname], file_extension= 'csv')
+        with open(file_path, 'w') as csv_file:
             writer = csv.writer(csv_file)
             for key, value in data_dict.items():
                 writer.writerow([key, value])
+    
+    def export_dict_as_one_row_text(self, data_dict, fname):
+        csv_columns= data_dict.keys()
+        file_path= gu.get_target_path([self.local_folder, fname], file_extension= 'csv')
+        with open(file_path, 'w') as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
+            writer.writeheader()
+            writer.writerow(data_dict)
+    
+    def export_df_as_text(self, df, fname):
+        file_path= gu.get_target_path([self.local_folder, fname], file_extension='csv')
+        df.to_csv(file_path, index=False, header=True)
     
     def get_metric_data_key(self, metric):
         keys=['type', 'project', 'dataset', 'use_case', 'setup']
@@ -117,17 +122,22 @@ class general_eval(object):
         datakeys= ['glue'] + datakeys
         return gu.get_target_path(datakeys)
     
-    def save_dict_as_one_row_text(self, data_dict, fname):
-        csv_columns= data_dict.keys()
-        with open(f'{fname}.csv', 'w') as csvfile:
-            writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
-            writer.writeheader()
-            writer.writerow(data_dict)
-    
     def export_metric_to_s3(self, df, key_name, file_name):
         datakey= self.get_metric_data_key(key_name)
         s3_uri= self.s3_base.create_s3_uri(self.export_bucket.decode(), datakey, file_name, FileType= 'parquet')
         self.s3_base.upload_parquet_with_wrangler(s3_uri, df)
+
+    def export_confusion_matrix_as_text(self):
+        df= self.conf_matrix
+        self.export_df_as_text(df, 'confusion_matrix')
+    
+    def export_atomic_metrics_to_s3(self):
+        df= gu.normalize_json(self.atomic_metrics)
+        self.export_metric_to_s3(df, 'atomic_metrics', 'atomic_metrics')
+    
+    def export_confusion_matrix_to_s3(self):
+        df= self.conf_matrix
+        self.export_metric_to_s3(df, 'confusion_matrix', 'confusion_matrix')   
 
 class xgboost_eval(general_eval):
     eval_type='xgb_eval'
@@ -218,9 +228,9 @@ class xgboost_eval(general_eval):
     def export_model_metrics(self):
         combined_metrics = {**self.atomic_metrics, **self.model_metrics['xgb_specific_params']}
         if self.export_local:
-            self.save_dict_as_one_row_text(combined_metrics, 'xgboost_metrics')
+            self.export_dict_as_one_row_text(combined_metrics, 'xgboost_metrics')
             self.export_histogram_as_text()
-            self.save_dict_as_text(self.model_metrics['model_config'], 'model_config')
+            self.export_dict_as_text(self.model_metrics['model_config'], 'model_config')
         if self.export_s3:
             self.export_model_metrics_to_s3(combined_metrics)
             self.export_histogram_to_s3()
@@ -228,7 +238,7 @@ class xgboost_eval(general_eval):
     
     def export_histogram_as_text(self):
         df= self.model_metrics['histogram']
-        df.to_csv(r'feature_histogram.csv', index=False, header=True)
+        self.export_df_as_text(df, 'feature_histogram')
     
     def export_model_metrics_to_s3(self, combined_metrics):
         df= gu.normalize_json(combined_metrics)
@@ -363,26 +373,27 @@ class xgboost_eval(general_eval):
     
     def export_importance_as_text(self):
         df= self.model_metrics['importance']
-        df.to_csv(r'imp.csv', index=False, header=True)
+        self.export_df_as_text(df, 'feature_importance')
     
     def export_tree_as_text(self):
-        self.booster.dump_model('tree.csv')
+        file_path= gu.get_target_path([self.local_folder, 'tree'], file_extension= 'csv')
+        self.booster.dump_model(file_path)
     
     def export_roc_as_text(self):
         df= self.plots['roc']
-        df.to_csv(r'roc.csv', index = False, header=True)
+        self.export_df_as_text(df, 'roc_curve')
     
     def export_pr_as_text(self):
         df= self.plots['pr']
-        df.to_csv(r'pr.csv', index = False, header=True)
+        self.export_df_as_text(df, 'pr_curve')
     
     def export_validation_as_text(self):
         df= self.model_metrics['validation_results']
-        df.to_csv(r'validation_results.csv', index = False, header=True)
+        self.export_df_as_text(df, 'validation_results')
     
     def export_prob_plot_as_text(self):
         df = self.plots['prob']
-        df.to_csv(r'proba.csv', index=False, header= True)
+        self.export_df_as_text(df, 'class_probabilities')
 
     def export_importance_to_s3(self):
         df= self.model_metrics['importance']
