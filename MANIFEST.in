@@ -1,1 +1,2 @@
 include data_ml_utils/README.rst
+include data_ml_utils/config/*.*

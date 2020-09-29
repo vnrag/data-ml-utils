@@ -1,58 +1,21 @@
 """A library containing commonly used utils for machine learning evaluation
 """
-import logging
+from data_ml_utils.mainutils import main_utils
 from sklearn import metrics
 import pandas as pd
 import xgboost as xgb
 import matplotlib.pyplot as plt
 import json
-import csv
-from data_utils.awsutils import S3Base, SSMBase
-import os
 from data_utils import generalutils as gu
 import numpy as np
 
-class general_eval(object):
-    eval_type='general_eval'
-    logger=None
-    atomic_metrics={}
+class general_eval(main_utils):
+    logger_name='general_eval'
     conf_matrix= None
     model_metrics={}
     y_actual= None
     y_predicted= None
     y_predicted_prob= None
-    export_local= None
-    export_s3= None
-    s3_base= None
-    ssm_base= None
-    export_bucket= None
-    
-    def __init__(self, project, dataset, use_case, setup, model_name, ts, num_rows, num_features, cv_folds, export_local= False, export_s3= False):
-        self.logger= logging.getLogger(self.eval_type)
-        self.logger.setLevel(logging.CRITICAL)
-        self.atomic_metrics['project']= project
-        self.atomic_metrics['dataset']= dataset
-        self.atomic_metrics['use_case']= use_case
-        self.atomic_metrics['setup']= setup
-        self.atomic_metrics['model']= model_name
-        self.atomic_metrics['ts']= ts
-        self.atomic_metrics['num_rows']= num_rows
-        self.atomic_metrics['num_features']= num_features
-        self.atomic_metrics['cv_folds']= cv_folds
-        if export_local:
-            self.export_local = export_local
-            self.prepare_local_folder(model_name)
-        if export_s3:
-            self.export_s3 = export_s3
-            self.s3_base= S3Base()
-            self.ssm_base= SSMBase()
-            self.export_bucket = self.ssm_base.get_ssm_parameter('MLBucketName', encoded = True)
-
-    def prepare_local_folder(self, model_name):
-        proj_folder= os.path.dirname(os.getcwd())
-        self.local_folder= gu.get_target_path([proj_folder, model_name])
-        if not os.path.exists(self.local_folder):
-            os.makedirs(self.local_folder)
     
     def get_atomic_metrics(self, y_actual, y_predicted, y_predicted_prob):
         self.y_actual= y_actual
@@ -70,7 +33,7 @@ class general_eval(object):
         self.atomic_metrics['auc_roc']= self.roc_auc()
     
     def confusion_matrix(self):
-        conf_df= pd.DataFrame({'actual':self.y_actual,
+        conf_df= gu.create_data_frame({'actual':self.y_actual,
                           'predicted':self.y_predicted})
         conf_df= conf_df.groupby(['actual','predicted'], as_index=False).size()
         conf_df.rename(columns={'size': 'count'})
@@ -100,37 +63,6 @@ class general_eval(object):
         if self.export_s3:
             self.export_atomic_metrics_to_s3()
             self.export_confusion_matrix_to_s3()
-    
-    def export_dict_as_text(self, data_dict , fname):
-        file_path= gu.get_target_path([self.local_folder, fname], file_extension= 'csv')
-        with open(file_path, 'w+') as csv_file:
-            writer = csv.writer(csv_file)
-            for key, value in data_dict.items():
-                writer.writerow([key, value])
-    
-    def export_dict_as_one_row_text(self, data_dict, fname):
-        csv_columns= data_dict.keys()
-        file_path= gu.get_target_path([self.local_folder, fname], file_extension= 'csv')
-        with open(file_path, 'w+') as csvfile:
-            writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
-            writer.writeheader()
-            writer.writerow(data_dict)
-    
-    def export_df_as_text(self, df, fname):
-        file_path= gu.get_target_path([self.local_folder, fname], file_extension='csv')
-        df.to_csv(file_path, index=False, header=True)
-    
-    def get_metric_data_key(self, metric):
-        keys=['type', 'project', 'dataset', 'use_case', 'setup']
-        values=[metric, self.atomic_metrics['project'], self.atomic_metrics['dataset'], self.atomic_metrics['use_case'], self.atomic_metrics['setup']]
-        datakeys= [k+'='+ v for k, v in zip(keys, values)]
-        datakeys= ['glue'] + datakeys
-        return gu.get_target_path(datakeys)
-    
-    def export_metric_to_s3(self, df, key_name, file_name):
-        datakey= self.get_metric_data_key(key_name)
-        s3_uri= self.s3_base.create_s3_uri(self.export_bucket.decode(), datakey, file_name, FileType= 'parquet')
-        self.s3_base.upload_parquet_with_wrangler(s3_uri, df)
 
     def export_confusion_matrix_as_text(self):
         df= self.conf_matrix
@@ -145,7 +77,7 @@ class general_eval(object):
         self.export_metric_to_s3(df, 'confusion_matrix', 'confusion_matrix')   
 
 class xgboost_eval(general_eval):
-    eval_type='xgb_eval'
+    logger_name='xgboost_eval'
     model= None
     booster= None
     used_features= None
@@ -180,7 +112,7 @@ class xgboost_eval(general_eval):
                 importance[imp_type] = self.booster.get_score(importance_type= imp_type)
             except Exception as e:
                 print(e)
-        importance_df= pd.DataFrame(importance)
+        importance_df= gu.create_data_frame(importance)
         importance_df.index.name ='feature'
         importance_df.reset_index(level=0, inplace=True)
         importance_df['model']= self.atomic_metrics['model']
@@ -216,9 +148,9 @@ class xgboost_eval(general_eval):
     
     def get_validation_results(self):
         val_results= self.model.evals_result()
-        train= pd.DataFrame(val_results['validation_0'])
+        train= gu.create_data_frame(val_results['validation_0'])
         train= train.add_prefix('train_')
-        test= pd.DataFrame(val_results['validation_1'])
+        test= gu.create_data_frame(val_results['validation_1'])
         test= test.add_prefix('test_')
         train_test= pd.concat([train, test],axis=1)
         train_test.index.name='epoch'
@@ -303,7 +235,7 @@ class xgboost_eval(general_eval):
     
     def get_roc_values(self):
         fpr, tpr, _ = metrics.roc_curve(self.y_actual, self.y_predicted_prob_one)
-        roc_df= pd.DataFrame({'fpr':fpr, 'tpr': tpr})
+        roc_df= gu.create_data_frame({'fpr':fpr, 'tpr': tpr})
         roc_df.index.name='index'
         roc_df.reset_index(level=0, inplace= True)
         roc_df['model']= self.atomic_metrics['model']
@@ -324,7 +256,7 @@ class xgboost_eval(general_eval):
     
     def get_pr_values(self):
         precision, recall, _ = metrics.precision_recall_curve(self.y_actual, self.y_predicted_prob_one)
-        pr_df= pd.DataFrame({'precision':precision, 'recall': recall})
+        pr_df= gu.create_data_frame({'precision':precision, 'recall': recall})
         pr_df.index.name='index'
         pr_df.reset_index(level=0, inplace= True)
         pr_df['model']= self.atomic_metrics['model']
@@ -359,7 +291,7 @@ class xgboost_eval(general_eval):
     def get_prob_values(self):
         cols = ['predicted','actual','prob_class_1']
         data= np.column_stack([self.y_predicted, self.y_actual, self.y_predicted_prob_one])
-        prob_df = pd.DataFrame(data= data, columns = cols)
+        prob_df = gu.create_data_frame(data= data, columns = cols)
         prob_df['classification'] = np.where(prob_df['predicted']==prob_df['actual'],'Positives','Negatives')
         prob_df.index.name='index'
         prob_df.reset_index(level=0, inplace=True)
