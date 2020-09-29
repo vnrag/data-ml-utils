@@ -125,6 +125,8 @@ class general_eval(object):
             writer.writerow(data_dict)
     
     def export_metric_to_s3(self, df, key_name, file_name):
+        import IPython
+        IPython.embed()
         datakey= self.get_metric_data_key(key_name)
         s3_uri= self.s3_base.create_s3_uri(self.export_bucket, datakey, file_name, FileType= "parquet")
         self.s3_base.upload_parquet_with_wrangler(s3_uri, df)
