@@ -25,5 +25,7 @@ class general_select(main_utils):
         self.export_df_as_text(df, 'feature_corr_matrix')
     
     def export_corr_matrix_to_s3(self):
+        import IPython
+        IPython.embed()
         df= self.feature_metrics['corr_matrix']
         self.export_metric_to_s3(df, 'feature_corr_matrix', 'feature_corr_matrix')   
