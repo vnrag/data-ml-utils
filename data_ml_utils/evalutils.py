@@ -43,7 +43,7 @@ class general_eval(object):
             self.export_s3 = export_s3
             self.s3_base= S3Base()
             self.ssm_base= SSMBase()
-            self.export_bucket = self.ssm_base.get_ssm_parameter('MLBucketName', encoded = True)
+            self.export_bucket = self.ssm_base.get_ssm_parameter('MLBucketName', encoded = False)
 
     def get_atomic_metrics(self, y_actual, y_predicted, y_predicted_prob):
         self.y_actual= y_actual
@@ -125,10 +125,8 @@ class general_eval(object):
             writer.writerow(data_dict)
     
     def export_metric_to_s3(self, df, key_name, file_name):
-        import IPython
-        IPython.embed()
         datakey= self.get_metric_data_key(key_name)
-        s3_uri= self.s3_base.create_s3_uri(self.export_bucket, datakey, file_name, FileType= 'parquet')
+        s3_uri= self.s3_base.create_s3_uri(self.export_bucket.decode(), datakey, file_name, FileType= 'parquet')
         self.s3_base.upload_parquet_with_wrangler(s3_uri, df)
 
 class xgboost_eval(general_eval):
