@@ -126,7 +126,7 @@ class general_eval(object):
     
     def export_metric_to_s3(self, df, key_name, file_name):
         datakey= self.get_metric_data_key(key_name)
-        s3_uri= self.s3_base.create_s3_uri(self.export_bucket, file_name, FileType= "parquet")
+        s3_uri= self.s3_base.create_s3_uri(self.export_bucket, datakey, file_name, FileType= "parquet")
         self.s3_base.upload_parquet_with_wrangler(s3_uri, df)
 
 class xgboost_eval(general_eval):
