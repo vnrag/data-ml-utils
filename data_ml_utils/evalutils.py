@@ -1,6 +1,6 @@
 """A library containing commonly used utils for machine learning evaluation
 """
-from mainutils import main_utils
+from data_ml_utils.mainutils import main_utils
 from sklearn import metrics
 import pandas as pd
 import xgboost as xgb

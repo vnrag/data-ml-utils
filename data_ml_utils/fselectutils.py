@@ -1,6 +1,6 @@
 """A library containing commonly used utils for machine learning feature selection
 """
-from mainutils import main_utils
+from data_ml_utils.mainutils import main_utils
 from data_utils import generalutils as gu
 
 class general_select(main_utils):
