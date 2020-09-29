@@ -49,7 +49,7 @@ class general_eval(object):
             self.export_bucket = self.ssm_base.get_ssm_parameter('MLBucketName', encoded = True)
 
     def prepare_local_folder(self, model_name):
-        proj_folder= os.path.dirname(os.path.abspath(__file__))
+        proj_folder= os.path.dirname(os.getcwd())
         self.local_folder= gu.get_target_path([proj_folder, model_name])
         if not os.path.exists(self.local_folder):
             os.makedirs(self.local_folder)
@@ -269,24 +269,28 @@ class xgboost_eval(general_eval):
         self.get_prob_plot()
         
     def get_importance_plots(self):
+        file_path= gu.get_target_path([self.local_folder, 'imp1'], file_extension= 'png')
         plt.rcParams.update(plt.rcParamsDefault)
         plt.bar(range(len(self.model.feature_importances_)), self.model.feature_importances_)
-        plt.savefig('imp1.png', bbox_inches='tight')
+        plt.savefig(file_path, bbox_inches='tight')
         plt.close()
         
+        file_path= gu.get_target_path([self.local_folder, 'imp2'], file_extension= 'png')
         plt.rcParams.update(plt.rcParamsDefault)
         xgb.plot_importance(self.model)
-        plt.savefig('imp2.png', bbox_inches='tight')
+        plt.savefig(file_path, bbox_inches='tight')
         plt.close()
     
     def get_tree_plot(self):
+        file_path= gu.get_target_path([self.local_folder, 'tree'], file_extension= 'png')
         plt.rcParams.update(plt.rcParamsDefault)
         plt.rcParams['figure.figsize'] = [50, 10]
         xgb.plot_tree(self.model,num_trees=0)
-        plt.savefig('tree.png', bbox_inches='tight')
+        plt.savefig(file_path, bbox_inches='tight')
         plt.close()
         
     def get_roc_plot(self):
+        file_path= gu.get_target_path([self.local_folder, 'roc'], file_extension= 'png')
         fpr= self.plots['roc']['fpr']
         tpr= self.plots['roc']['tpr']
         plt.rcParams.update(plt.rcParamsDefault)
@@ -294,7 +298,7 @@ class xgboost_eval(general_eval):
         plt.xlabel('False Positive Rate')
         plt.ylabel('True Positive Rate')
         plt.legend()
-        plt.savefig('roc.png', bbox_inches='tight')
+        plt.savefig(file_path, bbox_inches='tight')
         plt.close()
     
     def get_roc_values(self):
@@ -307,6 +311,7 @@ class xgboost_eval(general_eval):
         self.plots['roc']= roc_df
     
     def get_pr_plot(self):
+        file_path= gu.get_target_path([self.local_folder, 'pr'], file_extension= 'png')
         plt.rcParams.update(plt.rcParamsDefault)
         precision= self.plots['pr']['precision']
         recall= self.plots['pr']['recall']
@@ -314,7 +319,7 @@ class xgboost_eval(general_eval):
         plt.xlabel('Recall')
         plt.ylabel('Precision')
         plt.legend()
-        plt.savefig('pr.png', bbox_inches='tight')
+        plt.savefig(file_path, bbox_inches='tight')
         plt.close()
     
     def get_pr_values(self):
@@ -328,15 +333,17 @@ class xgboost_eval(general_eval):
     
     def get_validation_metrics_plots(self):
         for metric in self.validation_metrics:
+            file_path= gu.get_target_path([self.local_folder, f'val_{metric}'], file_extension= 'png')
             df= self.model_metrics['validation_results'][[f'test_{metric}',f'train_{metric}']]
             df.plot()
             plt.ylabel(metric)
             plt.xlabel('epochs')
             plt.title(f'XGBoost {metric}')
-            plt.savefig(f'val_{metric}.png', bbox_inches='tight')
+            plt.savefig(file_path, bbox_inches='tight')
             plt.close()
     
     def get_prob_plot(self):
+        file_path= gu.get_target_path([self.local_folder, 'proba'], file_extension= 'png')
         df= self.plots['prob']
         neg= df[df.classification=='Negatives']['prob_class_1']
         pos= df[df.classification=='Positives']['prob_class_1']
@@ -346,7 +353,7 @@ class xgboost_eval(general_eval):
         plt.ylabel('Number of records in each bucket')
         plt.legend()
         plt.tick_params(axis='both', pad=5)
-        plt.savefig(f'proba.png', bbox_inches='tight')
+        plt.savefig(file_path, bbox_inches='tight')
         plt.close()
     
     def get_prob_values(self):
