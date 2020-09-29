@@ -46,7 +46,7 @@ class general_eval(object):
             self.export_s3 = export_s3
             self.s3_base= S3Base()
             self.ssm_base= SSMBase()
-            self.export_bucket = self.ssm_base.get_ssm_parameter('MLBucketName', encoded = False)
+            self.export_bucket = self.ssm_base.get_ssm_parameter('MLBucketName', encoded = True)
 
     def prepare_local_folder(self, model_name):
         proj_folder= os.path.dirname(os.path.abspath(__file__))
