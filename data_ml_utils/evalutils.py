@@ -43,7 +43,7 @@ class general_eval(object):
             self.export_s3 = export_s3
             self.s3_base= S3Base()
             self.ssm_base= SSMBase()
-            self.export_bucket = SSMBase.get_ssm_parameter('MLBucketName', encoded = True)
+            self.export_bucket = self.ssm_base.get_ssm_parameter('MLBucketName', encoded = True)
 
     def get_atomic_metrics(self, y_actual, y_predicted, y_predicted_prob):
         self.y_actual= y_actual
