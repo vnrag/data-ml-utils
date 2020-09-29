@@ -1,0 +1,3 @@
+{
+    "s3_structure":["type", "project", "dataset", "use_case", "setup"]
+}
