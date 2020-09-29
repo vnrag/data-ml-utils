@@ -115,7 +115,7 @@ class general_eval(object):
         values=[metric, self.atomic_metrics['project'], self.atomic_metrics['dataset'], self.atomic_metrics['use_case'], self.atomic_metrics['setup']]
         datakeys= [k+'='+ v for k, v in zip(keys, values)]
         datakeys= ['glue'] + datakeys
-        return gu.get_target_path([datakeys])
+        return gu.get_target_path(datakeys)
     
     def save_dict_as_one_row_text(self, data_dict, fname):
         csv_columns= data_dict.keys()
@@ -125,8 +125,6 @@ class general_eval(object):
             writer.writerow(data_dict)
     
     def export_metric_to_s3(self, df, key_name, file_name):
-        import IPython
-        IPython.embed()
         datakey= self.get_metric_data_key(key_name)
         s3_uri= self.s3_base.create_s3_uri(self.export_bucket, datakey, file_name, FileType= 'parquet')
         self.s3_base.upload_parquet_with_wrangler(s3_uri, df)
