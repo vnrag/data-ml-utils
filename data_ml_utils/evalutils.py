@@ -12,7 +12,7 @@ from data_utils import generalutils as gu
 import numpy as np
 
 class general_eval(object):
-    eval_type="general_eval"
+    eval_type='general_eval'
     logger=None
     atomic_metrics={}
     conf_matrix= None
@@ -114,8 +114,8 @@ class general_eval(object):
         keys=['type', 'project', 'dataset', 'use_case', 'setup']
         values=[metric, self.atomic_metrics['project'], self.atomic_metrics['dataset'], self.atomic_metrics['use_case'], self.atomic_metrics['setup']]
         datakeys= [k+'='+ v for k, v in zip(keys, values)]
-        datakeys= ["glue"] + datakeys
-        return gu.get_target_path([f"glue",datakeys])
+        datakeys= ['glue'] + datakeys
+        return gu.get_target_path([datakeys])
     
     def save_dict_as_one_row_text(self, data_dict, fname):
         csv_columns= data_dict.keys()
@@ -128,11 +128,11 @@ class general_eval(object):
         import IPython
         IPython.embed()
         datakey= self.get_metric_data_key(key_name)
-        s3_uri= self.s3_base.create_s3_uri(self.export_bucket, datakey, file_name, FileType= "parquet")
+        s3_uri= self.s3_base.create_s3_uri(self.export_bucket, datakey, file_name, FileType= 'parquet')
         self.s3_base.upload_parquet_with_wrangler(s3_uri, df)
 
 class xgboost_eval(general_eval):
-    eval_type="xgb_eval"
+    eval_type='xgb_eval'
     model= None
     booster= None
     used_features= None
