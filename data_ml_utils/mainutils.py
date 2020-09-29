@@ -43,7 +43,7 @@ class main_utils(object):
             self.export_bucket = self.ssm_base.get_ssm_parameter('MLBucketName', encoded = True)
     
     def prepare_local_folder(self, model_name):
-        proj_folder= os.path.dirname(os.getcwd())
+        proj_folder= os.getcwd()
         self.local_folder= gu.get_target_path([proj_folder, model_name])
         if not os.path.exists(self.local_folder):
             os.makedirs(self.local_folder)
