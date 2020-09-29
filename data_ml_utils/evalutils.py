@@ -9,9 +9,6 @@ import json
 from data_utils import generalutils as gu
 import numpy as np
 
-from .config import load_config
-config = load_config()
-
 class general_eval(main_utils):
     logger_name='general_eval'
     conf_matrix= None
@@ -66,13 +63,6 @@ class general_eval(main_utils):
         if self.export_s3:
             self.export_atomic_metrics_to_s3()
             self.export_confusion_matrix_to_s3()
-    
-    def get_metric_data_key(self, metric):
-        keys= config['s3_structure']
-        values=[metric, self.atomic_metrics['project'], self.atomic_metrics['dataset'], self.atomic_metrics['use_case'], self.atomic_metrics['setup']]
-        datakeys= [k+'='+ v for k, v in zip(keys, values)]
-        datakeys= ['glue'] + datakeys
-        return gu.get_target_path(datakeys)
 
     def export_confusion_matrix_as_text(self):
         df= self.conf_matrix

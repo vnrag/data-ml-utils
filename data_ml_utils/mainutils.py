@@ -19,6 +19,7 @@ class main_utils(object):
     s3_base= None
     ssm_base= None
     export_bucket= None
+    local_folder= None
     
     def __init__(self, project, dataset, use_case, setup, model_name, ts, num_rows, num_features, cv_folds, export_local= False, export_s3= False):
         self.logger= logging.getLogger(self.logger_name)

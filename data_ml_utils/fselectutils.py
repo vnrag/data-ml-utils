@@ -3,9 +3,6 @@
 from mainutils import main_utils
 from data_utils import generalutils as gu
 
-from .config import load_config
-config = load_config()
-
 class general_select(main_utils):
     logger_name='general_select'
     feature_metrics= {}
