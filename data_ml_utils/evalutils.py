@@ -41,14 +41,19 @@ class general_eval(object):
         self.atomic_metrics['cv_folds']= cv_folds
         if export_local:
             self.export_local = export_local
-            proj_folder= os.path.dirname(os.path.abspath(__file__))
-            self.local_folder= gu.get_target_path([proj_folder, model_name])
+            self.prepare_local_folder(model_name)
         if export_s3:
             self.export_s3 = export_s3
             self.s3_base= S3Base()
             self.ssm_base= SSMBase()
             self.export_bucket = self.ssm_base.get_ssm_parameter('MLBucketName', encoded = False)
 
+    def prepare_local_folder(self, model_name):
+        proj_folder= os.path.dirname(os.path.abspath(__file__))
+        self.local_folder= gu.get_target_path([proj_folder, model_name])
+        if not os.path.exists(self.local_folder):
+            os.makedirs(self.local_folder)
+    
     def get_atomic_metrics(self, y_actual, y_predicted, y_predicted_prob):
         self.y_actual= y_actual
         self.y_predicted= y_predicted
