@@ -98,7 +98,7 @@ class general_eval(object):
     
     def export_dict_as_text(self, data_dict , fname):
         file_path= gu.get_target_path([self.local_folder, fname], file_extension= 'csv')
-        with open(file_path, 'w') as csv_file:
+        with open(file_path, 'w+') as csv_file:
             writer = csv.writer(csv_file)
             for key, value in data_dict.items():
                 writer.writerow([key, value])
@@ -106,7 +106,7 @@ class general_eval(object):
     def export_dict_as_one_row_text(self, data_dict, fname):
         csv_columns= data_dict.keys()
         file_path= gu.get_target_path([self.local_folder, fname], file_extension= 'csv')
-        with open(file_path, 'w') as csvfile:
+        with open(file_path, 'w+') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
             writer.writeheader()
             writer.writerow(data_dict)
