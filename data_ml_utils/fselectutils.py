@@ -16,6 +16,8 @@ class general_select(main_utils):
         ######################################################
         corr_mtx.index.name ='feature'
         corr_mtx.reset_index(level=0, inplace=True)
+        corr_mtx['model']= self.atomic_metrics['model']
+        corr_mtx['ts']= self.atomic_metrics['ts']
         self.feature_metrics['corr_matrix'] = corr_mtx
     
     def export_metrics(self):

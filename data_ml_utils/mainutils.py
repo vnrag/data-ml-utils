@@ -5,6 +5,7 @@ from data_utils.awsutils import S3Base, SSMBase
 import os
 from data_utils import generalutils as gu
 import csv
+import random
 
 from .config import load_config
 config = load_config()
@@ -20,6 +21,7 @@ class main_utils(object):
     ssm_base= None
     export_bucket= None
     local_folder= None
+    s3_hash= None
     
     def __init__(self, project, dataset, use_case, setup, model_name, ts, num_rows, num_features, cv_folds, export_local= False, export_s3= False):
         self.logger= logging.getLogger(self.logger_name)
@@ -41,6 +43,8 @@ class main_utils(object):
             self.s3_base= S3Base()
             self.ssm_base= SSMBase()
             self.export_bucket = self.ssm_base.get_ssm_parameter('MLBucketName', encoded = True)
+        self.s3_hash = random.getrandbits(128)
+        
     
     def prepare_local_folder(self, model_name):
         proj_folder= os.getcwd()
@@ -71,11 +75,11 @@ class main_utils(object):
         keys= config['s3_structure']
         values=[metric, self.atomic_metrics['project'], self.atomic_metrics['dataset'], self.atomic_metrics['use_case'], self.atomic_metrics['setup']]
         datakeys= [k+'='+ v for k, v in zip(keys, values)]
-        datakeys= ['glue'] + datakeys
+        datakeys= ['ML_Analysis'] + datakeys
         return gu.get_target_path(datakeys)
     
     def export_metric_to_s3(self, df, key_name, file_name):
+        file_name = file_name + "_%032x" % self.s3_hash
         datakey= self.get_metric_data_key(key_name)
         s3_uri= self.s3_base.create_s3_uri(self.export_bucket.decode(), datakey, file_name, FileType= 'parquet')
         self.s3_base.upload_parquet_with_wrangler(s3_uri, df)
-    
