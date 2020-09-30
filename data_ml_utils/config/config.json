@@ -1,3 +1,3 @@
 {
-    "s3_structure":["type", "project", "dataset", "use_case", "setup"]
+    "s3_structure":["partition_type", "partition_project", "partition_dataset", "partition_use_case", "partition_setup"]
 }
