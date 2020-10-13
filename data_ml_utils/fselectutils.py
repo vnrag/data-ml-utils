@@ -14,6 +14,8 @@ class general_select(main_utils):
         #should be removed when we have the feature names
         corr_mtx= corr_mtx.add_prefix('f')
         ######################################################
+        corr_mtx.melt(ignore_index= False)
+        corr_mtx= corr_mtx.rename(columns={"variable": "feature_1"})
         corr_mtx.index.name ='feature'
         corr_mtx.reset_index(level=0, inplace=True)
         corr_mtx['model']= self.atomic_metrics['model']
@@ -28,6 +30,7 @@ class general_select(main_utils):
     
     def export_corr_matrix_as_text(self):
         df= self.feature_metrics['corr_matrix']
+        
         self.export_df_as_text(df, 'feature_corr_matrix')
     
     def export_corr_matrix_to_s3(self):
