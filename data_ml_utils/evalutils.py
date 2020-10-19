@@ -87,21 +87,21 @@ class xgboost_eval(general_eval):
     def get_validation_metrics(self):
         return self.validation_metrics
     
-    def get_eval(self, xgb_model):
-        self.set_variables(xgb_model)
+    def get_eval(self, xgb_booster):
+        self.set_variables(xgb_booster)
         self.get_model_metrics()
     
-    def set_variables(self, xgb_model):
-        self.model= xgb_model
-        self.booster= xgb_model.get_booster()
-        self.used_features = xgb_model.get_booster().get_score().keys()
+    def set_variables(self, xgb_booster):
+        # self.model= xgb_model
+        self.booster= xgb_booster
+        self.used_features = xgb_booster.get_score().keys()
     
     def get_model_metrics(self):
         self.model_metrics['importance']= self.get_importance()
         self.model_metrics['histogram']= self.get_hist()
-        self.model_metrics['training_params']= self.get_training_params()
-        self.model_metrics['xgb_specific_params']= self.get_xgb_specific_params()
-        self.model_metrics['validation_results']= self.get_validation_results()
+        # self.model_metrics['training_params']= self.get_training_params()
+        # self.model_metrics['xgb_specific_params']= self.get_xgb_specific_params()
+        # self.model_metrics['validation_results']= self.get_validation_results()
         self.model_metrics['model_config']= self.get_model_config()
     
     def get_importance(self):
@@ -140,30 +140,31 @@ class xgboost_eval(general_eval):
         hist_df['ts']= self.atomic_metrics['ts']
         return hist_df
     
-    def get_training_params(self):
-        return self.model.get_params()
+    # def get_training_params(self):
+    #     return self.model.get_params()
     
-    def get_xgb_specific_params(self):
-        return self.model.get_xgb_params()
+    # def get_xgb_specific_params(self):
+    #     return self.model.get_xgb_params()
     
-    def get_validation_results(self):
-        val_results= self.model.evals_result()
-        train= gu.create_data_frame(val_results['validation_0'])
-        train= train.add_prefix('train_')
-        test= gu.create_data_frame(val_results['validation_1'])
-        test= test.add_prefix('test_')
-        train_test= pd.concat([train, test],axis=1)
-        train_test.index.name='epoch'
-        train_test.reset_index(level=0, inplace= True)
-        train_test['model']= self.atomic_metrics['model']
-        train_test['ts']= self.atomic_metrics['ts']
-        return train_test
+    # def get_validation_results(self):
+    #     val_results= self.model.evals_result()
+    #     train= gu.create_data_frame(val_results['validation_0'])
+    #     train= train.add_prefix('train_')
+    #     test= gu.create_data_frame(val_results['validation_1'])
+    #     test= test.add_prefix('test_')
+    #     train_test= pd.concat([train, test],axis=1)
+    #     train_test.index.name='epoch'
+    #     train_test.reset_index(level=0, inplace= True)
+    #     train_test['model']= self.atomic_metrics['model']
+    #     train_test['ts']= self.atomic_metrics['ts']
+    #     return train_test
     
     def get_model_config(self):
         return json.loads(self.booster.save_config())
 
     def export_model_metrics(self):
-        combined_metrics = {**self.atomic_metrics, **self.model_metrics['xgb_specific_params']}
+        # combined_metrics = {**self.atomic_metrics, **self.model_metrics['xgb_specific_params']}
+        combined_metrics = self.atomic_metrics
         if self.export_local:
             self.export_dict_as_one_row_text(combined_metrics, 'xgboost_metrics')
             self.export_histogram_as_text()
@@ -190,7 +191,7 @@ class xgboost_eval(general_eval):
         self.export_metric_to_s3(df, 'model_config', 'model_config')
 
     def get_plots(self):
-        self.get_validation_metrics_plots()
+        # self.get_validation_metrics_plots()
         self.get_importance_plots()
         self.get_tree_plot()
         self.get_roc_values()
@@ -301,14 +302,14 @@ class xgboost_eval(general_eval):
     
     def export_plots(self):
         if self.export_local:
-            self.export_validation_as_text()
+            # self.export_validation_as_text()
             self.export_importance_as_text()
             self.export_tree_as_text()
             self.export_roc_as_text()
             self.export_pr_as_text()
             self.export_prob_plot_as_text()
         if self.export_s3:
-            self.export_validation_to_s3()
+            # self.export_validation_to_s3()
             self.export_importance_to_s3()
             # self.export_tree_to_s3()
             self.export_roc_to_s3()
