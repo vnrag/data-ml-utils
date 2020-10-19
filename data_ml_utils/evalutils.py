@@ -35,8 +35,7 @@ class general_eval(main_utils):
     def confusion_matrix(self):
         conf_df= gu.create_data_frame({'actual':self.y_actual,
                           'predicted':self.y_predicted})
-        conf_df= conf_df.groupby(['actual','predicted'], as_index=False).size()
-        conf_df.rename(columns={'size': 'count'})
+        conf_df= conf_df.groupby(['actual','predicted']).size().to_frame('count').reset_index()
         conf_df['model']= self.atomic_metrics['model']
         conf_df['ts']= self.atomic_metrics['ts']
         return conf_df
