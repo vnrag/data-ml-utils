@@ -21,7 +21,7 @@ class general_eval(main_utils):
         self.y_actual= y_actual
         self.y_predicted= y_predicted
         self.y_predicted_prob= y_predicted_prob
-        self.y_predicted_prob_one= y_predicted_prob[:,1]
+        self.y_predicted_prob_one= y_predicted_prob
         self.get_perf_metrics()
         self.conf_matrix= self.confusion_matrix()
     
