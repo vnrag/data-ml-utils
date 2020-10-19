@@ -19,7 +19,7 @@ class general_eval(main_utils):
     
     def get_atomic_metrics(self, y_actual, y_predicted, y_predicted_prob):
         self.y_actual= y_actual
-        self.y_predicted= y_predicted
+        self.y_predicted= y_predicted.astype(int)
         self.y_predicted_prob= y_predicted_prob
         self.y_predicted_prob_one= y_predicted_prob
         self.get_perf_metrics()
