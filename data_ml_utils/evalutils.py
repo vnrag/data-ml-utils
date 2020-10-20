@@ -16,6 +16,7 @@ class general_eval(main_utils):
     y_actual= None
     y_predicted= None
     y_predicted_prob= None
+    feature_lookup= None
     
     def get_atomic_metrics(self, y_actual, y_predicted, y_predicted_prob):
         self.y_actual= y_actual
@@ -86,14 +87,22 @@ class xgboost_eval(general_eval):
     def get_validation_metrics(self):
         return self.validation_metrics
     
-    def get_eval(self, xgb_booster):
-        self.set_variables(xgb_booster)
+    def get_eval(self, xgb_booster, feature_names):
+        self.set_variables(xgb_booster, feature_names)
         self.get_model_metrics()
     
-    def set_variables(self, xgb_booster):
+    def set_variables(self, xgb_booster, feature_names):
         # self.model= xgb_model
         self.booster= xgb_booster
+        self.feature_lookup= self.get_features_lookup(feature_names)
         self.used_features = xgb_booster.get_score().keys()
+    
+    def get_features_lookup(self, feature_names):
+        df = pd.DataFrame(feature_names, columns=['feature_name'])
+        df.index.name= 'feature_code'
+        df.reset_index(level=0, inplace=True)
+        df['feature_code']= 'f' + df['feature_code'].astype(str)
+        return df
     
     def get_model_metrics(self):
         self.model_metrics['importance']= self.get_importance()
@@ -116,6 +125,8 @@ class xgboost_eval(general_eval):
         importance_df.reset_index(level=0, inplace=True)
         importance_df['model']= self.atomic_metrics['model']
         importance_df['ts']= self.atomic_metrics['ts']
+        ### to get feature names
+        importance_df= np.merge(importance_df, self.feature_lookup, left_on='feature', right_on='feature_code')
         return importance_df
 
     def get_hist(self):
@@ -137,6 +148,8 @@ class xgboost_eval(general_eval):
         hist_df= hist_df[cols]
         hist_df['mode']= self.atomic_metrics['model']
         hist_df['ts']= self.atomic_metrics['ts']
+        ### to get feature names
+        hist_df= np.merge(hist_df, self.feature_lookup, left_on='feature', right_on='feature_code')
         return hist_df
     
     # def get_training_params(self):
@@ -305,7 +318,7 @@ class xgboost_eval(general_eval):
         if self.export_local:
             # self.export_validation_as_text()
             self.export_importance_as_text()
-            self.export_tree_as_text()
+            # self.export_tree_as_text()
             self.export_roc_as_text()
             self.export_pr_as_text()
             self.export_prob_plot_as_text()

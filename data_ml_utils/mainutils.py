@@ -23,7 +23,7 @@ class main_utils(object):
     local_folder= None
     s3_hash= None
     
-    def __init__(self, project, dataset, use_case, setup, model_name, ts, num_rows, num_features, cv_folds, export_local= False, export_s3= False):
+    def __init__(self, project, dataset, use_case, setup, model_name, ts, train_size, validation_size, test_size, num_features, cv_folds, export_local= False, export_s3= False):
         self.logger= logging.getLogger(self.logger_name)
         self.logger.setLevel(logging.CRITICAL)
         self.atomic_metrics['project']= project
@@ -32,7 +32,9 @@ class main_utils(object):
         self.atomic_metrics['setup']= setup
         self.atomic_metrics['model']= model_name
         self.atomic_metrics['ts']= ts
-        self.atomic_metrics['num_rows']= num_rows
+        self.atomic_metrics['train_size']= train_size
+        self.atomic_metrics['validation_size']= validation_size
+        self.atomic_metrics['test_size']= test_size
         self.atomic_metrics['num_features']= num_features
         self.atomic_metrics['cv_folds']= cv_folds
         if export_local:
