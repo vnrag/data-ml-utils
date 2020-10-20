@@ -190,15 +190,17 @@ class xgboost_eval(general_eval):
         self.export_metric_to_s3(df, 'model_config', 'model_config')
 
     def get_plots(self):
-        # self.get_validation_metrics_plots()
-        self.get_importance_plots()
-        self.get_tree_plot()
-        self.get_roc_values()
-        self.get_roc_plot()
-        self.get_pr_values()
-        self.get_pr_plot()
         self.get_prob_values()
-        self.get_prob_plot()
+        self.get_pr_values()
+        self.get_roc_values()
+        if self.export_local:
+            self.get_prob_plot()
+            self.get_pr_plot()
+            self.get_roc_plot()
+            # self.get_validation_metrics_plots()
+            # self.get_importance_plots()
+            # self.get_tree_plot()
+        
         
     def get_importance_plots(self):
         file_path= gu.get_target_path([self.local_folder, 'imp1'], file_extension= 'png')
