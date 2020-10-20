@@ -13,6 +13,7 @@ class general_eval(main_utils):
     logger_name='general_eval'
     conf_matrix= None
     model_metrics={}
+    plots={}
     y_actual= None
     y_predicted= None
     y_predicted_prob= None
@@ -74,14 +75,104 @@ class general_eval(main_utils):
     
     def export_confusion_matrix_to_s3(self):
         df= self.conf_matrix
-        self.export_metric_to_s3(df, 'confusion_matrix', 'confusion_matrix')   
+        self.export_metric_to_s3(df, 'confusion_matrix', 'confusion_matrix')
+
+    def get_roc_plot(self):
+        file_path= gu.get_target_path([self.local_folder, 'roc'], file_extension= 'png')
+        fpr= self.plots['roc']['fpr']
+        tpr= self.plots['roc']['tpr']
+        plt.rcParams.update(plt.rcParamsDefault)
+        plt.plot(fpr, tpr, marker='.', label='xgboost')
+        plt.xlabel('False Positive Rate')
+        plt.ylabel('True Positive Rate')
+        plt.legend()
+        plt.savefig(file_path, bbox_inches='tight')
+        plt.close()
+    
+    def get_roc_values(self):
+        fpr, tpr, _ = metrics.roc_curve(self.y_actual, self.y_predicted_prob_one)
+        roc_df= gu.create_data_frame({'fpr':fpr, 'tpr': tpr})
+        roc_df.index.name='index'
+        roc_df.reset_index(level=0, inplace= True)
+        roc_df['model']= self.atomic_metrics['model']
+        roc_df['ts']= self.atomic_metrics['ts']
+        self.plots['roc']= roc_df
+    
+    def get_pr_plot(self):
+        file_path= gu.get_target_path([self.local_folder, 'pr'], file_extension= 'png')
+        plt.rcParams.update(plt.rcParamsDefault)
+        precision= self.plots['pr']['precision']
+        recall= self.plots['pr']['recall']
+        plt.plot(recall, precision, marker='.', label='xgboost')
+        plt.xlabel('Recall')
+        plt.ylabel('Precision')
+        plt.legend()
+        plt.savefig(file_path, bbox_inches='tight')
+        plt.close()
+    
+    def get_pr_values(self):
+        precision, recall, _ = metrics.precision_recall_curve(self.y_actual, self.y_predicted_prob_one)
+        pr_df= gu.create_data_frame({'precision':precision, 'recall': recall})
+        pr_df.index.name='index'
+        pr_df.reset_index(level=0, inplace= True)
+        pr_df['model']= self.atomic_metrics['model']
+        pr_df['ts']= self.atomic_metrics['ts']
+        self.plots['pr']= pr_df
+
+    def get_prob_plot(self):
+        file_path= gu.get_target_path([self.local_folder, 'proba'], file_extension= 'png')
+        df= self.plots['prob']
+        neg= df[df.classification=='Negatives']['prob_class_1']
+        pos= df[df.classification=='Positives']['prob_class_1']
+        plt.hist(neg, bins=100, label='Negatives')
+        plt.hist(pos, bins=100, label='Positives', alpha=0.7, color='r')
+        plt.xlabel('Probability of being Positive Class')
+        plt.ylabel('Number of records in each bucket')
+        plt.legend()
+        plt.tick_params(axis='both', pad=5)
+        plt.savefig(file_path, bbox_inches='tight')
+        plt.close()
+    
+    def get_prob_values(self):
+        cols = ['predicted','actual','prob_class_1']
+        data= np.column_stack([self.y_predicted, self.y_actual, self.y_predicted_prob_one])
+        prob_df = gu.create_data_frame(data= data, columns = cols)
+        prob_df['classification'] = np.where(prob_df['predicted']==prob_df['actual'],'Positives','Negatives')
+        prob_df.index.name='index'
+        prob_df.reset_index(level=0, inplace=True)
+        prob_df['model']= self.atomic_metrics['model']
+        prob_df['ts']= self.atomic_metrics['ts']
+        self.plots['prob']= prob_df
+    
+    def export_roc_as_text(self):
+        df= self.plots['roc']
+        self.export_df_as_text(df, 'roc_curve')
+    
+    def export_pr_as_text(self):
+        df= self.plots['pr']
+        self.export_df_as_text(df, 'pr_curve')
+    
+    def export_prob_plot_as_text(self):
+        df = self.plots['prob']
+        self.export_df_as_text(df, 'class_probabilities')    
+    
+    def export_roc_to_s3(self):
+        df= self.plots['roc']
+        self.export_metric_to_s3(df, 'roc_curve', 'roc_curve')
+    
+    def export_pr_to_s3(self):
+        df= self.plots['pr']
+        self.export_metric_to_s3(df, 'pr_curve', 'pr_curve')
+
+    def export_prob_plot_to_s3(self):
+        df = self.plots['prob']
+        self.export_metric_to_s3(df, 'class_probabilities', 'class_probabilities')
 
 class xgboost_eval(general_eval):
     logger_name='xgboost_eval'
     model= None
     booster= None
     used_features= None
-    plots={}
     validation_metrics=['auc', 'rmse', 'mae', 'logloss', 'error', 'aucpr', 'map']
     
     def get_validation_metrics(self):
@@ -126,7 +217,7 @@ class xgboost_eval(general_eval):
         importance_df['model']= self.atomic_metrics['model']
         importance_df['ts']= self.atomic_metrics['ts']
         ### to get feature names
-        importance_df= pd.merge(importance_df, self.feature_lookup, left_on='feature', right_on='feature_code')
+        importance_df= pd.merge(importance_df, self.feature_lookup, left_on='feature', right_on='feature_code').drop('feature_code', axis=1)
         return importance_df
 
     def get_hist(self):
@@ -149,7 +240,7 @@ class xgboost_eval(general_eval):
         hist_df['mode']= self.atomic_metrics['model']
         hist_df['ts']= self.atomic_metrics['ts']
         ### to get feature names
-        hist_df= pd.merge(hist_df, self.feature_lookup, left_on='feature', right_on='feature_code')
+        hist_df= pd.merge(hist_df, self.feature_lookup, left_on='feature', right_on='feature_code').drop('feature_code', axis=1)
         return hist_df
     
     # def get_training_params(self):
@@ -213,8 +304,7 @@ class xgboost_eval(general_eval):
             # self.get_validation_metrics_plots()
             # self.get_importance_plots()
             # self.get_tree_plot()
-        
-        
+
     def get_importance_plots(self):
         file_path= gu.get_target_path([self.local_folder, 'imp1'], file_extension= 'png')
         plt.rcParams.update(plt.rcParamsDefault)
@@ -235,48 +325,6 @@ class xgboost_eval(general_eval):
         xgb.plot_tree(self.model,num_trees=0)
         plt.savefig(file_path, bbox_inches='tight')
         plt.close()
-        
-    def get_roc_plot(self):
-        file_path= gu.get_target_path([self.local_folder, 'roc'], file_extension= 'png')
-        fpr= self.plots['roc']['fpr']
-        tpr= self.plots['roc']['tpr']
-        plt.rcParams.update(plt.rcParamsDefault)
-        plt.plot(fpr, tpr, marker='.', label='xgboost')
-        plt.xlabel('False Positive Rate')
-        plt.ylabel('True Positive Rate')
-        plt.legend()
-        plt.savefig(file_path, bbox_inches='tight')
-        plt.close()
-    
-    def get_roc_values(self):
-        fpr, tpr, _ = metrics.roc_curve(self.y_actual, self.y_predicted_prob_one)
-        roc_df= gu.create_data_frame({'fpr':fpr, 'tpr': tpr})
-        roc_df.index.name='index'
-        roc_df.reset_index(level=0, inplace= True)
-        roc_df['model']= self.atomic_metrics['model']
-        roc_df['ts']= self.atomic_metrics['ts']
-        self.plots['roc']= roc_df
-    
-    def get_pr_plot(self):
-        file_path= gu.get_target_path([self.local_folder, 'pr'], file_extension= 'png')
-        plt.rcParams.update(plt.rcParamsDefault)
-        precision= self.plots['pr']['precision']
-        recall= self.plots['pr']['recall']
-        plt.plot(recall, precision, marker='.', label='xgboost')
-        plt.xlabel('Recall')
-        plt.ylabel('Precision')
-        plt.legend()
-        plt.savefig(file_path, bbox_inches='tight')
-        plt.close()
-    
-    def get_pr_values(self):
-        precision, recall, _ = metrics.precision_recall_curve(self.y_actual, self.y_predicted_prob_one)
-        pr_df= gu.create_data_frame({'precision':precision, 'recall': recall})
-        pr_df.index.name='index'
-        pr_df.reset_index(level=0, inplace= True)
-        pr_df['model']= self.atomic_metrics['model']
-        pr_df['ts']= self.atomic_metrics['ts']
-        self.plots['pr']= pr_df
     
     def get_validation_metrics_plots(self):
         for metric in self.validation_metrics:
@@ -288,31 +336,6 @@ class xgboost_eval(general_eval):
             plt.title(f'XGBoost {metric}')
             plt.savefig(file_path, bbox_inches='tight')
             plt.close()
-    
-    def get_prob_plot(self):
-        file_path= gu.get_target_path([self.local_folder, 'proba'], file_extension= 'png')
-        df= self.plots['prob']
-        neg= df[df.classification=='Negatives']['prob_class_1']
-        pos= df[df.classification=='Positives']['prob_class_1']
-        plt.hist(neg, bins=100, label='Negatives')
-        plt.hist(pos, bins=100, label='Positives', alpha=0.7, color='r')
-        plt.xlabel('Probability of being Positive Class')
-        plt.ylabel('Number of records in each bucket')
-        plt.legend()
-        plt.tick_params(axis='both', pad=5)
-        plt.savefig(file_path, bbox_inches='tight')
-        plt.close()
-    
-    def get_prob_values(self):
-        cols = ['predicted','actual','prob_class_1']
-        data= np.column_stack([self.y_predicted, self.y_actual, self.y_predicted_prob_one])
-        prob_df = gu.create_data_frame(data= data, columns = cols)
-        prob_df['classification'] = np.where(prob_df['predicted']==prob_df['actual'],'Positives','Negatives')
-        prob_df.index.name='index'
-        prob_df.reset_index(level=0, inplace=True)
-        prob_df['model']= self.atomic_metrics['model']
-        prob_df['ts']= self.atomic_metrics['ts']
-        self.plots['prob']= prob_df
     
     def export_plots(self):
         if self.export_local:
@@ -338,21 +361,9 @@ class xgboost_eval(general_eval):
         file_path= gu.get_target_path([self.local_folder, 'tree'], file_extension= 'csv')
         self.booster.dump_model(file_path)
     
-    def export_roc_as_text(self):
-        df= self.plots['roc']
-        self.export_df_as_text(df, 'roc_curve')
-    
-    def export_pr_as_text(self):
-        df= self.plots['pr']
-        self.export_df_as_text(df, 'pr_curve')
-    
     def export_validation_as_text(self):
         df= self.model_metrics['validation_results']
         self.export_df_as_text(df, 'validation_results')
-    
-    def export_prob_plot_as_text(self):
-        df = self.plots['prob']
-        self.export_df_as_text(df, 'class_probabilities')
 
     def export_importance_to_s3(self):
         df= self.model_metrics['importance']
@@ -360,19 +371,7 @@ class xgboost_eval(general_eval):
     
     # def export_tree_to_s3(self):
     #     self.booster.dump_model('tree.csv')
-    
-    def export_roc_to_s3(self):
-        df= self.plots['roc']
-        self.export_metric_to_s3(df, 'roc_curve', 'roc_curve')
-    
-    def export_pr_to_s3(self):
-        df= self.plots['pr']
-        self.export_metric_to_s3(df, 'pr_curve', 'pr_curve')
-    
+   
     def export_validation_to_s3(self):
         df= self.model_metrics['validation_results']
         self.export_metric_to_s3(df, 'validation_results', 'validation_results')
-    
-    def export_prob_plot_to_s3(self):
-        df = self.plots['prob']
-        self.export_metric_to_s3(df, 'class_probabilities', 'class_probabilities')
