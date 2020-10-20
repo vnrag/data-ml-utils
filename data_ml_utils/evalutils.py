@@ -126,7 +126,7 @@ class xgboost_eval(general_eval):
         importance_df['model']= self.atomic_metrics['model']
         importance_df['ts']= self.atomic_metrics['ts']
         ### to get feature names
-        importance_df= np.merge(importance_df, self.feature_lookup, left_on='feature', right_on='feature_code')
+        importance_df= pd.merge(importance_df, self.feature_lookup, left_on='feature', right_on='feature_code')
         return importance_df
 
     def get_hist(self):
@@ -149,7 +149,7 @@ class xgboost_eval(general_eval):
         hist_df['mode']= self.atomic_metrics['model']
         hist_df['ts']= self.atomic_metrics['ts']
         ### to get feature names
-        hist_df= np.merge(hist_df, self.feature_lookup, left_on='feature', right_on='feature_code')
+        hist_df= pd.merge(hist_df, self.feature_lookup, left_on='feature', right_on='feature_code')
         return hist_df
     
     # def get_training_params(self):
