@@ -174,6 +174,7 @@ class xgboost_eval(general_eval):
     booster= None
     used_features= None
     validation_metrics=['auc', 'rmse', 'mae', 'logloss', 'error', 'aucpr', 'map']
+    hyper_params=['alpha','eta','gamma','lambda','max_delta_step','max_depth','min_child_weight']
     
     def get_validation_metrics(self):
         return self.validation_metrics
@@ -201,7 +202,26 @@ class xgboost_eval(general_eval):
         # self.model_metrics['training_params']= self.get_training_params()
         # self.model_metrics['xgb_specific_params']= self.get_xgb_specific_params()
         # self.model_metrics['validation_results']= self.get_validation_results()
-        self.model_metrics['model_config']= self.get_model_config()
+        # self.model_metrics['model_config']= self.get_model_config()
+        ## hyper params are just subset of model config
+        self.model_metrics['hyper_params']= self.get_hyperparams()
+    
+    def get_hyperparams(self):
+        hp={}
+        config= json.loads(self.booster.save_config())
+        train_params= config['learner']['gradient_booster']['updater']['grow_colmaker']['train_param']
+        for param in self.hyper_params:
+            try:
+                hp[param]= train_params[param]
+            except Exception as e:
+                print(f'Parameter {param}:')
+                print(e)
+        if len(hp) > 0:
+            hp_df= gu.normalize_json(hp)
+            hp_df['model']= self.atomic_metrics['model']
+            hp_df['ts']= self.atomic_metrics['ts']
+            return hp_df
+        return
     
     def get_importance(self):
         importance_types = ['weight','gain','cover','total_gain','total_cover']
@@ -273,13 +293,31 @@ class xgboost_eval(general_eval):
         # combined_metrics = {**self.atomic_metrics, **self.model_metrics['xgb_specific_params']}
         combined_metrics = self.atomic_metrics
         if self.export_local:
-            self.export_dict_as_one_row_text(combined_metrics, 'xgboost_metrics')
-            self.export_histogram_as_text()
-            self.export_dict_as_text(self.model_metrics['model_config'], 'model_config')
+            # self.export_dict_as_one_row_text(combined_metrics, 'xgboost_metrics')
+            # self.export_histogram_as_text()
+            # self.export_dict_as_text(self.model_metrics['model_config'], 'model_config')
+            self.export_hyperparameters_as_text()
         if self.export_s3:
-            self.export_model_metrics_to_s3(combined_metrics)
-            self.export_histogram_to_s3()
-            self.export_model_config_to_s3()
+            # self.export_model_metrics_to_s3(combined_metrics)
+            # self.export_histogram_to_s3()
+            # self.export_model_config_to_s3()
+            self.export_hyperparameters_to_s3()
+    
+    def export_hyperparameters_as_text(self):
+        try:
+            df= self.model_metrics['hyper_params']
+            self.export_df_as_text(df, 'hyperparameters')
+        except Exception as e:
+            print('Hyperparameters')
+            print(e)
+    
+    def export_hyperparameters_to_s3(self):
+        try:
+            df= self.model_metrics['hyper_params']
+            self.export_metric_to_s3(df, 'hyperparameters', 'hyperparameters')
+        except Exception as e:
+            print('Hyperparameters')
+            print(e)
     
     def export_histogram_as_text(self):
         try:
