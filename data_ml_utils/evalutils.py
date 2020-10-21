@@ -214,10 +214,12 @@ class xgboost_eval(general_eval):
             try:
                 hp[param]= train_params[param]
             except Exception as e:
-                print(f'Parameter {param}:')
-                print(e)
+                print('Error While getting hyperparameters')
+                print(f'Parameter {param}: {e}')
         if len(hp) > 0:
-            hp_df= gu.normalize_json(hp)
+            hp_sr= pd.Series(hp,name='value')
+            hp_sr.index.name='parameter'
+            hp_df= hp_sr.to_frame().reset_index()
             hp_df['model']= self.atomic_metrics['model']
             hp_df['ts']= self.atomic_metrics['ts']
             return hp_df
@@ -230,7 +232,8 @@ class xgboost_eval(general_eval):
             try:
                 importance[imp_type] = self.booster.get_score(importance_type= imp_type)
             except Exception as e:
-                print(e)
+                print('Error While getting feature importance')
+                print(f'Importance Type {imp_type}: {e}')
         if len(importance) > 0:
             importance_df= gu.create_data_frame(importance)
             importance_df.index.name ='feature'
@@ -252,8 +255,8 @@ class xgboost_eval(general_eval):
                 df['feature']= feature
                 hist[feature]= df
             except Exception as e:
-                print(f'Feature {feature}:')
-                print(e)
+                print('Error While getting feature histrogram')
+                print(f'Feature {feature}: {e}')
         if len(hist) > 0:
             hist_df = pd.concat(hist.values(), ignore_index=True)
             # rearrange columns
@@ -308,24 +311,24 @@ class xgboost_eval(general_eval):
             df= self.model_metrics['hyper_params']
             self.export_df_as_text(df, 'hyperparameters')
         except Exception as e:
-            print('Hyperparameters')
-            print(e)
+            print('Error While exporting Hyperparameters to local disk')
+            print(f'Hyperparameters: {e}')
     
     def export_hyperparameters_to_s3(self):
         try:
             df= self.model_metrics['hyper_params']
             self.export_metric_to_s3(df, 'hyperparameters', 'hyperparameters')
         except Exception as e:
-            print('Hyperparameters')
-            print(e)
+            print('Error While exporting Hyperparameters to s3')
+            print(f'Hyperparameters: {e}')
     
     def export_histogram_as_text(self):
         try:
             df= self.model_metrics['histogram']
             self.export_df_as_text(df, 'feature_histogram')
         except Exception as e:
-            print('histogram')
-            print(e)
+            print('Error While exporting Features Histogram to local disk')
+            print(f'Features Histogram: {e}')
     
     def export_model_metrics_to_s3(self, combined_metrics):
         df= gu.normalize_json(combined_metrics)
@@ -336,8 +339,8 @@ class xgboost_eval(general_eval):
             df= self.model_metrics['histogram']
             self.export_metric_to_s3(df, 'feature_histogram', 'feature_histogram')
         except Exception as e:
-            print('histogram')
-            print(e)
+            print('Error While exporting Features Histogram to s3')
+            print(f'Features Histogram: {e}')
     
     def export_model_config_to_s3(self):
         df= gu.normalize_json(self.model_metrics['model_config'])
@@ -408,8 +411,8 @@ class xgboost_eval(general_eval):
             df= self.model_metrics['importance']
             self.export_df_as_text(df, 'feature_importance')
         except Exception as e:
-            print('feature importance')
-            print(e)
+            print('Error While exporting Features Importace to local disk')
+            print(f'feature importance: {e}')
     
     def export_tree_as_text(self):
         file_path= gu.get_target_path([self.local_folder, 'tree'], file_extension= 'csv')
@@ -424,8 +427,8 @@ class xgboost_eval(general_eval):
             df= self.model_metrics['importance']
             self.export_metric_to_s3(df, 'feature_importance', 'feature_importance')
         except Exception as e:
-            print('feature importance')
-            print(e)
+            print('Error While exporting Features Importace to s3')
+            print(f'feature importance: {e}')
     
     # def export_tree_to_s3(self):
     #     self.booster.dump_model('tree.csv')
