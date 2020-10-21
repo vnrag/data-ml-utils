@@ -211,14 +211,16 @@ class xgboost_eval(general_eval):
                 importance[imp_type] = self.booster.get_score(importance_type= imp_type)
             except Exception as e:
                 print(e)
-        importance_df= gu.create_data_frame(importance)
-        importance_df.index.name ='feature'
-        importance_df.reset_index(level=0, inplace=True)
-        importance_df['model']= self.atomic_metrics['model']
-        importance_df['ts']= self.atomic_metrics['ts']
-        ### to get feature names
-        importance_df= pd.merge(importance_df, self.feature_lookup, left_on='feature', right_on='feature_code').drop('feature_code', axis=1)
-        return importance_df
+        if len(importance) > 0:
+            importance_df= gu.create_data_frame(importance)
+            importance_df.index.name ='feature'
+            importance_df.reset_index(level=0, inplace=True)
+            importance_df['model']= self.atomic_metrics['model']
+            importance_df['ts']= self.atomic_metrics['ts']
+            ### to get feature names
+            importance_df= pd.merge(importance_df, self.feature_lookup, left_on='feature', right_on='feature_code').drop('feature_code', axis=1)
+            return importance_df
+        return
 
     def get_hist(self):
         hist={}
@@ -232,16 +234,18 @@ class xgboost_eval(general_eval):
             except Exception as e:
                 print(f'Feature {feature}:')
                 print(e)
-        hist_df = pd.concat(hist.values(), ignore_index=True)
-        # rearrange columns
-        cols = hist_df.columns.tolist()
-        cols = cols[-1:] + cols[:-1]
-        hist_df= hist_df[cols]
-        hist_df['mode']= self.atomic_metrics['model']
-        hist_df['ts']= self.atomic_metrics['ts']
-        ### to get feature names
-        hist_df= pd.merge(hist_df, self.feature_lookup, left_on='feature', right_on='feature_code').drop('feature_code', axis=1)
-        return hist_df
+        if len(hist) > 0:
+            hist_df = pd.concat(hist.values(), ignore_index=True)
+            # rearrange columns
+            cols = hist_df.columns.tolist()
+            cols = cols[-1:] + cols[:-1]
+            hist_df= hist_df[cols]
+            hist_df['mode']= self.atomic_metrics['model']
+            hist_df['ts']= self.atomic_metrics['ts']
+            ### to get feature names
+            hist_df= pd.merge(hist_df, self.feature_lookup, left_on='feature', right_on='feature_code').drop('feature_code', axis=1)
+            return hist_df
+        return
     
     # def get_training_params(self):
     #     return self.model.get_params()
