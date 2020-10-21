@@ -217,7 +217,7 @@ class xgboost_eval(general_eval):
                 print('Error While getting hyperparameters')
                 print(f'Parameter {param}: {e}')
         if len(hp) > 0:
-            hp_sr= pd.Series(hp,name='value')
+            hp_sr= pd.to_numeric(pd.Series(hp,name='value'))
             hp_sr.index.name='parameter'
             hp_df= hp_sr.to_frame().reset_index()
             hp_df['model']= self.atomic_metrics['model']
