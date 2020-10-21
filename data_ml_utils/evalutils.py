@@ -282,16 +282,24 @@ class xgboost_eval(general_eval):
             self.export_model_config_to_s3()
     
     def export_histogram_as_text(self):
-        df= self.model_metrics['histogram']
-        self.export_df_as_text(df, 'feature_histogram')
+        try:
+            df= self.model_metrics['histogram']
+            self.export_df_as_text(df, 'feature_histogram')
+        except Exception as e:
+            print('histogram')
+            print(e)
     
     def export_model_metrics_to_s3(self, combined_metrics):
         df= gu.normalize_json(combined_metrics)
         self.export_metric_to_s3(df, 'xgboost_metrics', 'xgboost_metrics')
     
     def export_histogram_to_s3(self):
-        df= self.model_metrics['histogram']
-        self.export_metric_to_s3(df, 'feature_histogram', 'feature_histogram')
+        try:
+            df= self.model_metrics['histogram']
+            self.export_metric_to_s3(df, 'feature_histogram', 'feature_histogram')
+        except Exception as e:
+            print('histogram')
+            print(e)
     
     def export_model_config_to_s3(self):
         df= gu.normalize_json(self.model_metrics['model_config'])
@@ -358,8 +366,12 @@ class xgboost_eval(general_eval):
             self.export_prob_plot_to_s3()
     
     def export_importance_as_text(self):
-        df= self.model_metrics['importance']
-        self.export_df_as_text(df, 'feature_importance')
+        try:
+            df= self.model_metrics['importance']
+            self.export_df_as_text(df, 'feature_importance')
+        except Exception as e:
+            print('feature importance')
+            print(e)
     
     def export_tree_as_text(self):
         file_path= gu.get_target_path([self.local_folder, 'tree'], file_extension= 'csv')
@@ -370,8 +382,12 @@ class xgboost_eval(general_eval):
         self.export_df_as_text(df, 'validation_results')
 
     def export_importance_to_s3(self):
-        df= self.model_metrics['importance']
-        self.export_metric_to_s3(df, 'feature_importance', 'feature_importance')
+        try:
+            df= self.model_metrics['importance']
+            self.export_metric_to_s3(df, 'feature_importance', 'feature_importance')
+        except Exception as e:
+            print('feature importance')
+            print(e)
     
     # def export_tree_to_s3(self):
     #     self.booster.dump_model('tree.csv')
