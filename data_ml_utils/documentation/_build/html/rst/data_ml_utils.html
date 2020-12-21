@@ -1,0 +1,1218 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>data_ml_utils package &#8212; ml_data_utils  documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">ml_data_utils  documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">data_ml_utils package</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="data-ml-utils-package">
+<h1>data_ml_utils package<a class="headerlink" href="#data-ml-utils-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-data_ml_utils.evalutils">
+<span id="data-ml-utils-evalutils-module"></span><h2>data_ml_utils.evalutils module<a class="headerlink" href="#module-data_ml_utils.evalutils" title="Permalink to this headline">¶</a></h2>
+<p>A library of utils for machine learning evaluation</p>
+<dl class="py class">
+<dt id="data_ml_utils.evalutils.general_eval">
+<em class="property">class </em><code class="sig-prename descclassname">data_ml_utils.evalutils.</code><code class="sig-name descname">general_eval</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">project</span></em>, <em class="sig-param"><span class="n">dataset</span></em>, <em class="sig-param"><span class="n">use_case</span></em>, <em class="sig-param"><span class="n">setup</span></em>, <em class="sig-param"><span class="n">model_name</span></em>, <em class="sig-param"><span class="n">ts</span></em>, <em class="sig-param"><span class="n">train_size</span></em>, <em class="sig-param"><span class="n">validation_size</span></em>, <em class="sig-param"><span class="n">test_size</span></em>, <em class="sig-param"><span class="n">num_features</span></em>, <em class="sig-param"><span class="n">cv_folds</span></em>, <em class="sig-param"><span class="n">export_local</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">export_s3</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.general_eval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#data_ml_utils.mainutils.main_utils" title="data_ml_utils.mainutils.main_utils"><code class="xref py py-class docutils literal notranslate"><span class="pre">data_ml_utils.mainutils.main_utils</span></code></a></p>
+<p>Class for general evaluation utilities</p>
+<dl class="py attribute">
+<dt id="data_ml_utils.evalutils.general_eval.conf_matrix">
+<code class="sig-name descname">conf_matrix</code><a class="headerlink" href="#data_ml_utils.evalutils.general_eval.conf_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confusiuon matrix of testing dataset</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="data_ml_utils.evalutils.general_eval.feature_lookup">
+<code class="sig-name descname">feature_lookup</code><a class="headerlink" href="#data_ml_utils.evalutils.general_eval.feature_lookup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mapping table for features names</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="data_ml_utils.evalutils.general_eval.logger_name">
+<code class="sig-name descname">logger_name</code><a class="headerlink" href="#data_ml_utils.evalutils.general_eval.logger_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Name of the logger</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="data_ml_utils.evalutils.general_eval.model_metrics">
+<code class="sig-name descname">model_metrics</code><a class="headerlink" href="#data_ml_utils.evalutils.general_eval.model_metrics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dictionary containing model specific metrics</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="data_ml_utils.evalutils.general_eval.plots">
+<code class="sig-name descname">plots</code><a class="headerlink" href="#data_ml_utils.evalutils.general_eval.plots" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dictionary containing data for creating plots</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="data_ml_utils.evalutils.general_eval.y_actual">
+<code class="sig-name descname">y_actual</code><a class="headerlink" href="#data_ml_utils.evalutils.general_eval.y_actual" title="Permalink to this definition">¶</a></dt>
+<dd><p>Actual target labels</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="data_ml_utils.evalutils.general_eval.y_predicted">
+<code class="sig-name descname">y_predicted</code><a class="headerlink" href="#data_ml_utils.evalutils.general_eval.y_predicted" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predicted target labels</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="data_ml_utils.evalutils.general_eval.y_predicted_prob">
+<code class="sig-name descname">y_predicted_prob</code><a class="headerlink" href="#data_ml_utils.evalutils.general_eval.y_predicted_prob" title="Permalink to this definition">¶</a></dt>
+<dd><p>Probabilities of instances for each class in the model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="data_ml_utils.evalutils.general_eval.y_predicted_prob_one">
+<code class="sig-name descname">y_predicted_prob_one</code><a class="headerlink" href="#data_ml_utils.evalutils.general_eval.y_predicted_prob_one" title="Permalink to this definition">¶</a></dt>
+<dd><p>Probabilities of instances for class== 1</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.general_eval.accuracy">
+<code class="sig-name descname">accuracy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.general_eval.accuracy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates accuracy score of a model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Accuracy score from sklearn library</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="id0">
+<code class="sig-name descname">conf_matrix</code><em class="property"> = None</em><a class="headerlink" href="#id0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.general_eval.confusion_matrix">
+<code class="sig-name descname">confusion_matrix</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.general_eval.confusion_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates confusion matrix score of a model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Confusion Matrix between actual and predicted labels</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.general_eval.export_atomic_metrics">
+<code class="sig-name descname">export_atomic_metrics</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.general_eval.export_atomic_metrics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exports atomic metrics and confusion matrix.
+If export_local flag is set to True, metrics are saved to
+text files on the local machine. If export_s3 flag is set
+to True, metrics are saved to parquet files on s3.
+Atomic metrics in text format are exported as one row.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.general_eval.export_atomic_metrics_to_s3">
+<code class="sig-name descname">export_atomic_metrics_to_s3</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.general_eval.export_atomic_metrics_to_s3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exports atomic metrics to s3 in parquet format</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.general_eval.export_confusion_matrix_as_text">
+<code class="sig-name descname">export_confusion_matrix_as_text</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.general_eval.export_confusion_matrix_as_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exports confusion matrix metric to local disk in csv format</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.general_eval.export_confusion_matrix_to_s3">
+<code class="sig-name descname">export_confusion_matrix_to_s3</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.general_eval.export_confusion_matrix_to_s3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exports confusion matrix metric to s3 in parquet format</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.general_eval.export_pr_as_text">
+<code class="sig-name descname">export_pr_as_text</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.general_eval.export_pr_as_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exports PR curve values to local disk in csv format</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.general_eval.export_pr_to_s3">
+<code class="sig-name descname">export_pr_to_s3</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.general_eval.export_pr_to_s3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exports PR curve values to s3 in parquet format</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.general_eval.export_prob_plot_as_text">
+<code class="sig-name descname">export_prob_plot_as_text</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.general_eval.export_prob_plot_as_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exports class probabilities histogram values
+to local disk in csv format</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.general_eval.export_prob_plot_to_s3">
+<code class="sig-name descname">export_prob_plot_to_s3</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.general_eval.export_prob_plot_to_s3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exports class probabilities histogram values
+to s3 in parquet format</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.general_eval.export_roc_as_text">
+<code class="sig-name descname">export_roc_as_text</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.general_eval.export_roc_as_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exports ROC curve values to local disk in csv format</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.general_eval.export_roc_to_s3">
+<code class="sig-name descname">export_roc_to_s3</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.general_eval.export_roc_to_s3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exports ROC curve values to s3 in parquet format</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.general_eval.f1">
+<code class="sig-name descname">f1</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.general_eval.f1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates f1 score score of a model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>F1 score from sklearn library</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>float or array of float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="id1">
+<code class="sig-name descname">feature_lookup</code><em class="property"> = None</em><a class="headerlink" href="#id1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.general_eval.get_atomic_metrics">
+<code class="sig-name descname">get_atomic_metrics</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">y_actual</span></em>, <em class="sig-param"><span class="n">y_predicted</span></em>, <em class="sig-param"><span class="n">y_predicted_prob</span></em><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.general_eval.get_atomic_metrics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates general purpose evaluation metrics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y_actual</strong> (<em>ndarray</em>) – Actual target labels</p></li>
+<li><p><strong>y_predicted</strong> (<em>ndarray</em>) – Predicted target labels</p></li>
+<li><p><strong>y_predicted_prob</strong> (<em>ndarray</em>) – Probabilities of instances for each class in the model</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.general_eval.get_perf_metrics">
+<code class="sig-name descname">get_perf_metrics</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.general_eval.get_perf_metrics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates general machine learning performance metrics.
+Adds them to atomic_metrics dictionary.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.general_eval.get_pr_plot">
+<code class="sig-name descname">get_pr_plot</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.general_eval.get_pr_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves a copy of PR curve plot on local disk</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.general_eval.get_pr_values">
+<code class="sig-name descname">get_pr_values</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.general_eval.get_pr_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates values for creating PR curve plot.
+Needs precision and recall.
+Stores values in plots dictionary</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.general_eval.get_prob_plot">
+<code class="sig-name descname">get_prob_plot</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.general_eval.get_prob_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves a copy of class probabilities histogram
+plot on local disk</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.general_eval.get_prob_values">
+<code class="sig-name descname">get_prob_values</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.general_eval.get_prob_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates values for creating class probabilities
+histogram plot.
+Needs actual labels, predicted labels and class probabilites
+for class == 1.
+Stores values in plots dictionary</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.general_eval.get_roc_plot">
+<code class="sig-name descname">get_roc_plot</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.general_eval.get_roc_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves a copy of ROC curve plot on local disk</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.general_eval.get_roc_values">
+<code class="sig-name descname">get_roc_values</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.general_eval.get_roc_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates values for creating ROC curve plot.
+Needs true positive rate (TPR) and false positive
+rate (FPR). Stores values in plots dictionary</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="id2">
+<code class="sig-name descname">logger_name</code><em class="property"> = 'general_eval'</em><a class="headerlink" href="#id2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="id3">
+<code class="sig-name descname">model_metrics</code><em class="property"> = {}</em><a class="headerlink" href="#id3" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="id4">
+<code class="sig-name descname">plots</code><em class="property"> = {}</em><a class="headerlink" href="#id4" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.general_eval.precision">
+<code class="sig-name descname">precision</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.general_eval.precision" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates precision score of a model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Precision score from sklearn library</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>float or array of float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.general_eval.recall">
+<code class="sig-name descname">recall</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.general_eval.recall" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates recall score of a model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Recall score from sklearn</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>float or array of float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.general_eval.roc_auc">
+<code class="sig-name descname">roc_auc</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.general_eval.roc_auc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates area under the roc curve score of a model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Area under the roc curve score from sklearn</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="id5">
+<code class="sig-name descname">y_actual</code><em class="property"> = None</em><a class="headerlink" href="#id5" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="id6">
+<code class="sig-name descname">y_predicted</code><em class="property"> = None</em><a class="headerlink" href="#id6" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="id7">
+<code class="sig-name descname">y_predicted_prob</code><em class="property"> = None</em><a class="headerlink" href="#id7" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="data_ml_utils.evalutils.xgboost_eval">
+<em class="property">class </em><code class="sig-prename descclassname">data_ml_utils.evalutils.</code><code class="sig-name descname">xgboost_eval</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">project</span></em>, <em class="sig-param"><span class="n">dataset</span></em>, <em class="sig-param"><span class="n">use_case</span></em>, <em class="sig-param"><span class="n">setup</span></em>, <em class="sig-param"><span class="n">model_name</span></em>, <em class="sig-param"><span class="n">ts</span></em>, <em class="sig-param"><span class="n">train_size</span></em>, <em class="sig-param"><span class="n">validation_size</span></em>, <em class="sig-param"><span class="n">test_size</span></em>, <em class="sig-param"><span class="n">num_features</span></em>, <em class="sig-param"><span class="n">cv_folds</span></em>, <em class="sig-param"><span class="n">export_local</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">export_s3</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.xgboost_eval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#data_ml_utils.evalutils.general_eval" title="data_ml_utils.evalutils.general_eval"><code class="xref py py-class docutils literal notranslate"><span class="pre">data_ml_utils.evalutils.general_eval</span></code></a></p>
+<p>Class for XGBoost model evaluation utilities</p>
+<dl class="py attribute">
+<dt id="data_ml_utils.evalutils.xgboost_eval.booster">
+<code class="sig-name descname">booster</code><a class="headerlink" href="#data_ml_utils.evalutils.xgboost_eval.booster" title="Permalink to this definition">¶</a></dt>
+<dd><p>A Booster of XGBoost</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Booster</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="data_ml_utils.evalutils.xgboost_eval.feature_lookup">
+<code class="sig-name descname">feature_lookup</code><a class="headerlink" href="#data_ml_utils.evalutils.xgboost_eval.feature_lookup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mapping of features to their names</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="data_ml_utils.evalutils.xgboost_eval.hyper_params">
+<code class="sig-name descname">hyper_params</code><a class="headerlink" href="#data_ml_utils.evalutils.xgboost_eval.hyper_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hyperparameters of the model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="data_ml_utils.evalutils.xgboost_eval.logger_name">
+<code class="sig-name descname">logger_name</code><a class="headerlink" href="#data_ml_utils.evalutils.xgboost_eval.logger_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Name of Logger</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="data_ml_utils.evalutils.xgboost_eval.model">
+<code class="sig-name descname">model</code><a class="headerlink" href="#data_ml_utils.evalutils.xgboost_eval.model" title="Permalink to this definition">¶</a></dt>
+<dd><p>XGBoost implementation of sklearn API for XGBoost classification</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>XGBClassifier</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="data_ml_utils.evalutils.xgboost_eval.used_features">
+<code class="sig-name descname">used_features</code><a class="headerlink" href="#data_ml_utils.evalutils.xgboost_eval.used_features" title="Permalink to this definition">¶</a></dt>
+<dd><p>Features used for building the model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="data_ml_utils.evalutils.xgboost_eval.validation_metrics">
+<code class="sig-name descname">validation_metrics</code><a class="headerlink" href="#data_ml_utils.evalutils.xgboost_eval.validation_metrics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Metrics used for the evluation during learning step</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="id8">
+<code class="sig-name descname">booster</code><em class="property"> = None</em><a class="headerlink" href="#id8" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.xgboost_eval.export_histogram_as_text">
+<code class="sig-name descname">export_histogram_as_text</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.xgboost_eval.export_histogram_as_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exports xgboost features histogram to local disk
+in csv format</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.xgboost_eval.export_histogram_to_s3">
+<code class="sig-name descname">export_histogram_to_s3</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.xgboost_eval.export_histogram_to_s3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exports xgboost features histogram to s3 in
+parquet format</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.xgboost_eval.export_hyperparameters_as_text">
+<code class="sig-name descname">export_hyperparameters_as_text</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.xgboost_eval.export_hyperparameters_as_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exports xgboost hyperparameters to local disk
+in csv format</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.xgboost_eval.export_hyperparameters_to_s3">
+<code class="sig-name descname">export_hyperparameters_to_s3</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.xgboost_eval.export_hyperparameters_to_s3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exports xgboost hyperparameters to s3 in parquet format</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.xgboost_eval.export_importance_as_text">
+<code class="sig-name descname">export_importance_as_text</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.xgboost_eval.export_importance_as_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exports xgboost features importance metric to
+local disk in csv format</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.xgboost_eval.export_importance_to_s3">
+<code class="sig-name descname">export_importance_to_s3</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.xgboost_eval.export_importance_to_s3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exports xgboost features importance metric to
+s3 in parquet format</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.xgboost_eval.export_model_config_to_s3">
+<code class="sig-name descname">export_model_config_to_s3</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.xgboost_eval.export_model_config_to_s3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exports internal parameters configuration of
+xgboost model to s3 in parquet format</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.xgboost_eval.export_model_metrics">
+<code class="sig-name descname">export_model_metrics</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.xgboost_eval.export_model_metrics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exports each xgboost model metric to a separate file.
+If export_local flag is set to True, metrics are saved to
+text files on the local machine. If export_s3 flag is set
+to True, metrics are saved to parquet files on s3.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.xgboost_eval.export_model_metrics_to_s3">
+<code class="sig-name descname">export_model_metrics_to_s3</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">combined_metrics</span></em><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.xgboost_eval.export_model_metrics_to_s3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exports atomic and xgboost metrics together</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>combined_metrics</strong> (<em>dict</em>) – Atomic and xgboost metrics</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.xgboost_eval.export_plots">
+<code class="sig-name descname">export_plots</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.xgboost_eval.export_plots" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exports xgboost evaluation plots data.
+If export_local flag is set to True, data is saved to
+text files on the local machine. If export_s3 flag is set
+to True, data is saved to parquet files on s3.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.xgboost_eval.export_tree_as_text">
+<code class="sig-name descname">export_tree_as_text</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.xgboost_eval.export_tree_as_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exports xgboost decision tree to local
+disk in csv format</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.xgboost_eval.export_validation_as_text">
+<code class="sig-name descname">export_validation_as_text</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.xgboost_eval.export_validation_as_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exports xgboost validation results to
+local disk in csv format</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.xgboost_eval.export_validation_to_s3">
+<code class="sig-name descname">export_validation_to_s3</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.xgboost_eval.export_validation_to_s3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exports xgboost validation results to
+s3 in parquet format</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.xgboost_eval.get_eval">
+<code class="sig-name descname">get_eval</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xgb_booster</span></em>, <em class="sig-param"><span class="n">feature_names</span></em><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.xgboost_eval.get_eval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluates xgboost model and store metrics in
+model_metrics dictionary</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xgb_booster</strong> (<em>Booster</em>) – A Booster of XGBoost</p></li>
+<li><p><strong>feature_names</strong> (<em>list</em>) – Featues names</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.xgboost_eval.get_features_lookup">
+<code class="sig-name descname">get_features_lookup</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">feature_names</span></em><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.xgboost_eval.get_features_lookup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a mapping table between xgboost model
+features and their names</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>feature_names</strong> (<em>list</em>) – Features Names</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Mapping table for features and their names</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.xgboost_eval.get_hist">
+<code class="sig-name descname">get_hist</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.xgboost_eval.get_hist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts split values histogram from xgboost
+model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Split values histogram table</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.xgboost_eval.get_hyperparams">
+<code class="sig-name descname">get_hyperparams</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.xgboost_eval.get_hyperparams" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts hyperparameters from xgboost model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Hyperparameters of learned model</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.xgboost_eval.get_importance">
+<code class="sig-name descname">get_importance</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.xgboost_eval.get_importance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts features importance from xgboost model
+Uses different importance criteria from the xgboost
+library
+:returns: Features importance table
+:rtype: DataFrame</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.xgboost_eval.get_importance_plots">
+<code class="sig-name descname">get_importance_plots</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.xgboost_eval.get_importance_plots" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepares xgboost features importance bar plots.
+Saves images to local disk</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.xgboost_eval.get_model_config">
+<code class="sig-name descname">get_model_config</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.xgboost_eval.get_model_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts internal parameters configuration
+of xgboost model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Internal parameters configuration</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.xgboost_eval.get_model_metrics">
+<code class="sig-name descname">get_model_metrics</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.xgboost_eval.get_model_metrics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates xgboost specific performance metrics.
+Adds them to model_metrics dictionary.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.xgboost_eval.get_plots">
+<code class="sig-name descname">get_plots</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.xgboost_eval.get_plots" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates data for xbgoost evaluation plots.
+Exports images to local disk it export_local flag
+is set to True</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.xgboost_eval.get_tree_plot">
+<code class="sig-name descname">get_tree_plot</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.xgboost_eval.get_tree_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepares xgboost model decision tree diagram.
+Saves images to local disk.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.xgboost_eval.get_validation_metrics">
+<code class="sig-name descname">get_validation_metrics</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.xgboost_eval.get_validation_metrics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves a list of xgboost model
+validation metrics</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Metrics for evaluation during learning step</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.xgboost_eval.get_validation_metrics_plots">
+<code class="sig-name descname">get_validation_metrics_plots</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.xgboost_eval.get_validation_metrics_plots" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepares xgboost validation metrics plots.
+Saves images to local disk</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="id9">
+<code class="sig-name descname">hyper_params</code><em class="property"> = ['alpha', 'eta', 'gamma', 'lambda', 'max_delta_step', 'max_depth', 'min_child_weight']</em><a class="headerlink" href="#id9" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="id10">
+<code class="sig-name descname">logger_name</code><em class="property"> = 'xgboost_eval'</em><a class="headerlink" href="#id10" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="id11">
+<code class="sig-name descname">model</code><em class="property"> = None</em><a class="headerlink" href="#id11" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.evalutils.xgboost_eval.set_variables">
+<code class="sig-name descname">set_variables</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xgb_booster</span></em>, <em class="sig-param"><span class="n">feature_names</span></em><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.evalutils.xgboost_eval.set_variables" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores xgboost model object, extracts used
+features and creates features names mapping
+table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xgb_booster</strong> (<em>Booster</em>) – A Booster of XGBoost</p></li>
+<li><p><strong>feature_names</strong> (<em>list</em>) – Features names</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="id12">
+<code class="sig-name descname">used_features</code><em class="property"> = None</em><a class="headerlink" href="#id12" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="id13">
+<code class="sig-name descname">validation_metrics</code><em class="property"> = ['auc', 'rmse', 'mae', 'logloss', 'error', 'aucpr', 'map']</em><a class="headerlink" href="#id13" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-data_ml_utils.fextractutils">
+<span id="data-ml-utils-fextractutils-module"></span><h2>data_ml_utils.fextractutils module<a class="headerlink" href="#module-data_ml_utils.fextractutils" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-data_ml_utils.fselectutils">
+<span id="data-ml-utils-fselectutils-module"></span><h2>data_ml_utils.fselectutils module<a class="headerlink" href="#module-data_ml_utils.fselectutils" title="Permalink to this headline">¶</a></h2>
+<p>A library of utils for machine learning feature selection</p>
+<dl class="py class">
+<dt id="data_ml_utils.fselectutils.general_select">
+<em class="property">class </em><code class="sig-prename descclassname">data_ml_utils.fselectutils.</code><code class="sig-name descname">general_select</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">project</span></em>, <em class="sig-param"><span class="n">dataset</span></em>, <em class="sig-param"><span class="n">use_case</span></em>, <em class="sig-param"><span class="n">setup</span></em>, <em class="sig-param"><span class="n">model_name</span></em>, <em class="sig-param"><span class="n">ts</span></em>, <em class="sig-param"><span class="n">train_size</span></em>, <em class="sig-param"><span class="n">validation_size</span></em>, <em class="sig-param"><span class="n">test_size</span></em>, <em class="sig-param"><span class="n">num_features</span></em>, <em class="sig-param"><span class="n">cv_folds</span></em>, <em class="sig-param"><span class="n">export_local</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">export_s3</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.fselectutils.general_select" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#data_ml_utils.mainutils.main_utils" title="data_ml_utils.mainutils.main_utils"><code class="xref py py-class docutils literal notranslate"><span class="pre">data_ml_utils.mainutils.main_utils</span></code></a></p>
+<p>Class for general feature selection utilities</p>
+<dl class="py attribute">
+<dt id="data_ml_utils.fselectutils.general_select.feature_metrics">
+<code class="sig-name descname">feature_metrics</code><a class="headerlink" href="#data_ml_utils.fselectutils.general_select.feature_metrics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dictionary containing calculated metrics</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="data_ml_utils.fselectutils.general_select.logger_name">
+<code class="sig-name descname">logger_name</code><a class="headerlink" href="#data_ml_utils.fselectutils.general_select.logger_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Name of Logger</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.fselectutils.general_select.export_corr_matrix_as_text">
+<code class="sig-name descname">export_corr_matrix_as_text</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.fselectutils.general_select.export_corr_matrix_as_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Export correlation matrix metric to local disk in csv format</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.fselectutils.general_select.export_corr_matrix_to_s3">
+<code class="sig-name descname">export_corr_matrix_to_s3</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.fselectutils.general_select.export_corr_matrix_to_s3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Export correlation matrix metric to s3 in parquet format</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.fselectutils.general_select.export_metrics">
+<code class="sig-name descname">export_metrics</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.fselectutils.general_select.export_metrics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exports each feature selection metric to a separate file.
+If export_local flag is set to True, metrics are saved to
+text files on the local machine. If export_s3 flag is set
+to True, metrics are saved to parquet files on s3.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="id14">
+<code class="sig-name descname">feature_metrics</code><em class="property"> = {}</em><a class="headerlink" href="#id14" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.fselectutils.general_select.get_features_corr_matrix">
+<code class="sig-name descname">get_features_corr_matrix</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">matrix</span></em><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.fselectutils.general_select.get_features_corr_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates a matrix of correlation between
+pairs of features</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>matrix</strong> – DataFrame
+Pandas dataframe containing features</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="id15">
+<code class="sig-name descname">logger_name</code><em class="property"> = 'general_select'</em><a class="headerlink" href="#id15" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-data_ml_utils.mainutils">
+<span id="data-ml-utils-mainutils-module"></span><h2>data_ml_utils.mainutils module<a class="headerlink" href="#module-data_ml_utils.mainutils" title="Permalink to this headline">¶</a></h2>
+<p>A library of utils for machine learning Operations</p>
+<dl class="py attribute">
+<dt id="data_ml_utils.mainutils.config">
+<code class="sig-prename descclassname">data_ml_utils.mainutils.</code><code class="sig-name descname">config</code><a class="headerlink" href="#data_ml_utils.mainutils.config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Configuration elements</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt id="data_ml_utils.mainutils.main_utils">
+<em class="property">class </em><code class="sig-prename descclassname">data_ml_utils.mainutils.</code><code class="sig-name descname">main_utils</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">project</span></em>, <em class="sig-param"><span class="n">dataset</span></em>, <em class="sig-param"><span class="n">use_case</span></em>, <em class="sig-param"><span class="n">setup</span></em>, <em class="sig-param"><span class="n">model_name</span></em>, <em class="sig-param"><span class="n">ts</span></em>, <em class="sig-param"><span class="n">train_size</span></em>, <em class="sig-param"><span class="n">validation_size</span></em>, <em class="sig-param"><span class="n">test_size</span></em>, <em class="sig-param"><span class="n">num_features</span></em>, <em class="sig-param"><span class="n">cv_folds</span></em>, <em class="sig-param"><span class="n">export_local</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">export_s3</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.mainutils.main_utils" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A parent class for all machine learning utils.
+It contains the basic shared attributes and functions.
+Attributes describe business purpose and technical details.
+Functions for handling of results like exporting them.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project</strong> (<em>str</em>) – Name of the project the analysis is done for</p></li>
+<li><p><strong>dataset</strong> (<em>str</em>) – Name of the dataset used for the analysis</p></li>
+<li><p><strong>use_case</strong> (<em>str</em>) – Name of the business scenario the analysis is done for</p></li>
+<li><p><strong>setup</strong> (<em>str</em>) – Specification of the business scenario</p></li>
+<li><p><strong>model_name</strong> (<em>str</em>) – Name of the machine learning model applied</p></li>
+<li><p><strong>ts</strong> (<em>datetime</em>) – Timestamp when the analysis was done</p></li>
+<li><p><strong>num_rows</strong> (<em>int</em>) – Number of rows in the dataset</p></li>
+<li><p><strong>num_features</strong> (<em>int</em>) – Number of features of the dataset</p></li>
+<li><p><strong>cv_folds</strong> (<em>int</em>) – Number of cross validation folds</p></li>
+<li><p><strong>export_local</strong> (<em>bool</em><em>, </em><em>optional</em>) – Export evaluation metrics to local machine</p></li>
+<li><p><strong>export_s3</strong> (<em>bool</em><em>, </em><em>optional</em>) – Export evaluation metrics to s3</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt id="data_ml_utils.mainutils.main_utils.atomic_metrics">
+<code class="sig-name descname">atomic_metrics</code><a class="headerlink" href="#data_ml_utils.mainutils.main_utils.atomic_metrics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Metadata of the project, dataset and model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="data_ml_utils.mainutils.main_utils.export_bucket">
+<code class="sig-name descname">export_bucket</code><a class="headerlink" href="#data_ml_utils.mainutils.main_utils.export_bucket" title="Permalink to this definition">¶</a></dt>
+<dd><p>S3 bucket for exporting results</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="data_ml_utils.mainutils.main_utils.export_local">
+<code class="sig-name descname">export_local</code><a class="headerlink" href="#data_ml_utils.mainutils.main_utils.export_local" title="Permalink to this definition">¶</a></dt>
+<dd><p>Control exporting results to local machine</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="data_ml_utils.mainutils.main_utils.export_s3">
+<code class="sig-name descname">export_s3</code><a class="headerlink" href="#data_ml_utils.mainutils.main_utils.export_s3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Control exporting results to s3</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="data_ml_utils.mainutils.main_utils.local_folder">
+<code class="sig-name descname">local_folder</code><a class="headerlink" href="#data_ml_utils.mainutils.main_utils.local_folder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Path for local exports</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="data_ml_utils.mainutils.main_utils.logger">
+<code class="sig-name descname">logger</code><a class="headerlink" href="#data_ml_utils.mainutils.main_utils.logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Logging object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Logger</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="data_ml_utils.mainutils.main_utils.logger_name">
+<code class="sig-name descname">logger_name</code><a class="headerlink" href="#data_ml_utils.mainutils.main_utils.logger_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Name of the logger</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="data_ml_utils.mainutils.main_utils.s3_base">
+<code class="sig-name descname">s3_base</code><a class="headerlink" href="#data_ml_utils.mainutils.main_utils.s3_base" title="Permalink to this definition">¶</a></dt>
+<dd><p>Object for handling s3 operations</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>S3Base</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="data_ml_utils.mainutils.main_utils.s3_hash">
+<code class="sig-name descname">s3_hash</code><a class="headerlink" href="#data_ml_utils.mainutils.main_utils.s3_hash" title="Permalink to this definition">¶</a></dt>
+<dd><p>Random 128 bit hash. Added to parquet exports on s3. All files with the same hash belong to the same analysis</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="data_ml_utils.mainutils.main_utils.ssm_base">
+<code class="sig-name descname">ssm_base</code><a class="headerlink" href="#data_ml_utils.mainutils.main_utils.ssm_base" title="Permalink to this definition">¶</a></dt>
+<dd><p>Object for handling ssm operations</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>SSMBase</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="id16">
+<code class="sig-name descname">atomic_metrics</code><em class="property"> = {}</em><a class="headerlink" href="#id16" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="id17">
+<code class="sig-name descname">export_bucket</code><em class="property"> = None</em><a class="headerlink" href="#id17" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.mainutils.main_utils.export_df_as_text">
+<code class="sig-name descname">export_df_as_text</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">fname</span></em><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.mainutils.main_utils.export_df_as_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes a dataframe to a text file.
+File is exported to a folder holding the machine learning model name
+based on the model_name parameter</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>Pandas DataFrame</em>) – DataFrame of data to be exported</p></li>
+<li><p><strong>fname</strong> (<em>str</em>) – Name of file</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.mainutils.main_utils.export_dict_as_one_row_text">
+<code class="sig-name descname">export_dict_as_one_row_text</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_dict</span></em>, <em class="sig-param"><span class="n">fname</span></em><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.mainutils.main_utils.export_dict_as_one_row_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes a dictionary to a text file after pivoting it’s data
+into one row. File is exported to a folder holding the machine
+learning model name based on the model_name parameter</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_dict</strong> (<em>dict</em>) – Dictinary of data to be exported</p></li>
+<li><p><strong>fname</strong> (<em>str</em>) – Name of the file</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.mainutils.main_utils.export_dict_as_text">
+<code class="sig-name descname">export_dict_as_text</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_dict</span></em>, <em class="sig-param"><span class="n">fname</span></em><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.mainutils.main_utils.export_dict_as_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes a dictionary to a text file.
+File is exported to a folder holding the machine learning model name
+based on the model_name parameter</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_dict</strong> (<em>dict</em>) – Dictinary of data to be exported</p></li>
+<li><p><strong>fname</strong> (<em>str</em>) – Name of the file</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="id18">
+<code class="sig-name descname">export_local</code><em class="property"> = None</em><a class="headerlink" href="#id18" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.mainutils.main_utils.export_metric_to_s3">
+<code class="sig-name descname">export_metric_to_s3</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">key_name</span></em>, <em class="sig-param"><span class="n">file_name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.mainutils.main_utils.export_metric_to_s3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes a dataframe to s3 in parquet format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>Pandas DataFrame</em>) – DataFrame of data to be exported</p></li>
+<li><p><strong>key_name</strong> (<em>str</em>) – Name of s3 partition</p></li>
+<li><p><strong>file_name</strong> (<em>str</em>) – Name of file</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="id19">
+<code class="sig-name descname">export_s3</code><em class="property"> = None</em><a class="headerlink" href="#id19" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.mainutils.main_utils.get_metric_data_key">
+<code class="sig-name descname">get_metric_data_key</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">metric</span></em><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.mainutils.main_utils.get_metric_data_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an s3 key for exporting results of a metric.
+Uses s3_structure from configuration dictionary for partitions structure.
+Uses metadata from atomic_metrics attribute to fill the partition values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>metric</strong> (<em>str</em>) – Name of metric. Used to</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>S3 key for exporting results of the metric</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="id20">
+<code class="sig-name descname">local_folder</code><em class="property"> = None</em><a class="headerlink" href="#id20" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="id21">
+<code class="sig-name descname">logger</code><em class="property"> = None</em><a class="headerlink" href="#id21" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="id22">
+<code class="sig-name descname">logger_name</code><em class="property"> = 'main_utils'</em><a class="headerlink" href="#id22" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="data_ml_utils.mainutils.main_utils.prepare_local_folder">
+<code class="sig-name descname">prepare_local_folder</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model_name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#data_ml_utils.mainutils.main_utils.prepare_local_folder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a folder to export results on local machine.
+model_name parameter is used as the folder name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>model_name</strong> (<em>str</em>) – Name of the mahchine learning model</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="id23">
+<code class="sig-name descname">s3_base</code><em class="property"> = None</em><a class="headerlink" href="#id23" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="id24">
+<code class="sig-name descname">s3_hash</code><em class="property"> = None</em><a class="headerlink" href="#id24" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="id25">
+<code class="sig-name descname">ssm_base</code><em class="property"> = None</em><a class="headerlink" href="#id25" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-data_ml_utils">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-data_ml_utils" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">data_ml_utils package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-data_ml_utils.evalutils">data_ml_utils.evalutils module</a></li>
+<li><a class="reference internal" href="#module-data_ml_utils.fextractutils">data_ml_utils.fextractutils module</a></li>
+<li><a class="reference internal" href="#module-data_ml_utils.fselectutils">data_ml_utils.fselectutils module</a></li>
+<li><a class="reference internal" href="#module-data_ml_utils.mainutils">data_ml_utils.mainutils module</a></li>
+<li><a class="reference internal" href="#module-data_ml_utils">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/rst/data_ml_utils.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">ml_data_utils  documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">data_ml_utils package</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, VNR Verlag für die Deutsche Wirtschaft AG.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.2.1.
+    </div>
+  </body>
+</html>

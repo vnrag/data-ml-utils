@@ -15,7 +15,10 @@ sphinx = "*"
 pytest = "*"
 xgboost = "*"
 graphviz = "*"
-data-utils = {git = "https://git@github.com/vnrag/data-utils.git"}
+moto = "*"
 
 [requires]
 python_version = "3.6"
+
+[packages.data-utils]
+git = "https://git@github.com/vnrag/data-utils.git"

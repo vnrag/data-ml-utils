@@ -1,0 +1,6 @@
+Name,Value
+project,test_project
+dataset,test_ds
+use_case,test_uc
+setup,test_stp
+model_name,test_model
