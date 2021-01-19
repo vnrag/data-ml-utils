@@ -97,14 +97,7 @@ class TestMainUtils(object):
 
         buckets = s3.list_buckets()
         return buckets
-
-    def delete_local_folder(self):
-        """Function to delete analysis result folder
-        from previous tests
-        """
-        if os.path.exists(MODEL_FOLDER):
-            shutil.rmtree(MODEL_FOLDER)
-
+    
     def test_init(self, s3, ssm):
         """Tests creation of mainutils object
         
@@ -115,8 +108,6 @@ class TestMainUtils(object):
         ssm : object
             mocked ssm client object
         """
-        # make sure the local folder doesn't exist
-        self.delete_local_folder()
 
         mu = main_utils(
             project='test_proj',
@@ -351,9 +342,9 @@ class TestMainUtils(object):
         assert mu.s3_base.check_if_object_exists(
             bucket, full_key)
 
-        df = pd.read_parquet(s3_key)
+        df_exported = mu.s3_base.load_parquet_with_wrangler(s3_key)
 
-        len(df) == 5
-        df.columns.to_list() == ['Name', 'Value']
-        df.iloc[0]['Name'] == 'project'
-        df.iloc[1]['Value'] == 'test_ds'
+        assert len(df) == 5
+        assert df_exported.columns.to_list() == ['Name', 'Value']
+        assert df_exported.iloc[0]['Name'] == 'project'
+        assert df_exported.iloc[1]['Value'] == 'test_ds'

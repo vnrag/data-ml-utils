@@ -58,7 +58,7 @@ class general_eval(main_utils):
         self.y_actual= y_actual
         self.y_predicted= y_predicted
         self.y_predicted_prob= y_predicted_prob
-        self.y_predicted_prob_one= y_predicted_prob
+        self.y_predicted_prob_one= y_predicted_prob[:, 1] if y_predicted_prob.shape[1] > 1 else y_predicted_prob
         self.get_perf_metrics()
         self.conf_matrix= self.confusion_matrix()
     
@@ -176,7 +176,7 @@ class general_eval(main_utils):
         fpr= self.plots['roc']['fpr']
         tpr= self.plots['roc']['tpr']
         plt.rcParams.update(plt.rcParamsDefault)
-        plt.plot(fpr, tpr, marker='.', label='xgboost')
+        plt.plot(fpr, tpr, marker='.', label=f"{self.atomic_metrics['model']}")
         plt.xlabel('False Positive Rate')
         plt.ylabel('True Positive Rate')
         plt.legend()
@@ -203,7 +203,7 @@ class general_eval(main_utils):
         plt.rcParams.update(plt.rcParamsDefault)
         precision= self.plots['pr']['precision']
         recall= self.plots['pr']['recall']
-        plt.plot(recall, precision, marker='.', label='xgboost')
+        plt.plot(recall, precision, marker='.', label=f"{self.atomic_metrics['model']}")
         plt.xlabel('Recall')
         plt.ylabel('Precision')
         plt.legend()

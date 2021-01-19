@@ -1,0 +1,7 @@
+index,predicted,actual,prob_class_1,classification,model,ts
+0,1.0,1.0,0.5,Positives,test_model,2021-01-19 17:52:27.479052
+1,1.0,0.0,0.5,Negatives,test_model,2021-01-19 17:52:27.479052
+2,1.0,1.0,0.5,Positives,test_model,2021-01-19 17:52:27.479052
+3,0.0,0.0,0.5,Positives,test_model,2021-01-19 17:52:27.479052
+4,1.0,0.0,0.5,Negatives,test_model,2021-01-19 17:52:27.479052
+5,0.0,1.0,0.5,Negatives,test_model,2021-01-19 17:52:27.479052

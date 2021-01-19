@@ -11,14 +11,15 @@ numpy = "*"
 sklearn = "*"
 matplotlib = "*"
 ipykernel = "*"
-sphinx = "*"
+Sphinx = "*"
 pytest = "*"
 xgboost = "*"
 graphviz = "*"
 moto = "*"
+jedi = "==0.17.2"
 
 [requires]
 python_version = "3.6"
 
-[packages.data-utils]
+[packages.data_utils]
 git = "https://git@github.com/vnrag/data-utils.git"

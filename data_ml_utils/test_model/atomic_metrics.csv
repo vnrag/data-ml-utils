@@ -1,0 +1,2 @@
+project,dataset,use_case,setup,model,ts,train_size,validation_size,test_size,num_features,cv_folds,accuracy,f1,precision,recall,auc_roc
+test_proj,test_ds,test_uc,test_stp,test_model,2021-01-19 17:52:27.479052,4,0,4,4,0,0.5,0.5714285714285715,0.5,0.6666666666666666,0.5
